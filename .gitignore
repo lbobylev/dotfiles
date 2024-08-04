@@ -1,0 +1,13 @@
+iterm2/
+jgit/
+git/
+tmux/plugins/
+github-copilot/
+raycast/
+fish/
+htop/
+*.mp3
+*.wav
+qBittorrent/
+.aider*
+yazi/plugins/

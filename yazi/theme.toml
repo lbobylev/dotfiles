@@ -1,0 +1,170 @@
+# vim:fileencoding=utf-8:foldmethod=marker
+
+# : Manager {{{
+
+[manager]
+cwd = { fg = "#66D9EF" } # Monokai Blue
+
+# Hovered
+hovered         = { reversed = true }
+preview_hovered = { underline = true }
+
+# Find
+find_keyword  = { fg = "#E6DB74", bold = true, italic = true, underline = true } # Monokai Yellow
+find_position = { fg = "#F92672", bg = "reset", bold = true, italic = true } # Monokai Pink/Red
+
+# Marker
+marker_copied   = { fg = "#A6E22E", bg = "#A6E22E" } # Monokai Green
+marker_cut      = { fg = "#F92672", bg = "#F92672" } # Monokai Pink/Red
+marker_marked   = { fg = "#66D9EF", bg = "#66D9EF" } # Monokai Blue
+marker_selected = { fg = "#E6DB74", bg = "#E6DB74" } # Monokai Yellow
+
+# Tab
+tab_active   = { reversed = true }
+tab_inactive = {}
+tab_width    = 1
+
+# Count
+count_copied   = { fg = "#272822", bg = "#A6E22E" } # Monokai Dark BG / Green
+count_cut      = { fg = "#272822", bg = "#F92672" } # Monokai Dark BG / Pink/Red
+count_selected = { fg = "#272822", bg = "#E6DB74" } # Monokai Dark BG / Yellow
+
+# Border
+border_symbol = "│"
+border_style  = { fg = "#75715E" } # Monokai Comment/Subtle
+
+# : }}}
+
+
+# : Mode {{{
+
+[mode]
+
+normal_main = { fg = "#272822", bg = "#66D9EF", bold = true } # Monokai Dark BG / Blue
+normal_alt  = { fg = "#66D9EF", bg = "#3E3D32" } # Monokai Blue / Darker BG
+
+# Select mode
+select_main = { fg = "#272822", bg = "#A6E22E", bold = true } # Monokai Dark BG / Green
+select_alt  = { fg = "#A6E22E", bg = "#3E3D32" } # Monokai Green / Darker BG
+
+# Unset mode
+unset_main = { fg = "#272822", bg = "#F92672", bold = true } # Monokai Dark BG / Pink/Red
+unset_alt  = { fg = "#F92672", bg = "#3E3D32" } # Monokai Pink/Red / Darker BG
+
+# : }}}
+
+
+# : Status bar {{{
+
+[status]
+# Permissions
+perm_sep   = { fg = "#75715E" } # Monokai Comment/Subtle
+perm_type  = { fg = "#66D9EF" } # Monokai Blue
+perm_read  = { fg = "#E6DB74" } # Monokai Yellow
+perm_write = { fg = "#F92672" } # Monokai Pink/Red
+perm_exec  = { fg = "#A6E22E" } # Monokai Green
+
+# Progress
+progress_label  = { fg = "#F8F8F2", bold = true } # Monokai Foreground
+progress_normal = { fg = "#66D9EF", bg = "#49483E" } # Monokai Blue / Darker Gray BG
+progress_error  = { fg = "#F92672", bg = "#49483E" } # Monokai Pink/Red / Darker Gray BG
+
+# : }}}
+
+
+# : Pick {{{
+
+[pick]
+border   = { fg = "#66D9EF" } # Monokai Blue
+active   = { fg = "#F92672", bold = true } # Monokai Pink/Red
+inactive = {}
+
+# : }}}
+
+
+# : Input {{{
+
+[input]
+border   = { fg = "#66D9EF" } # Monokai Blue
+title    = {}
+value    = {}
+selected = { reversed = true }
+
+# : }}}
+
+
+# : Completion {{{
+
+[cmp]
+border = { fg = "#66D9EF" } # Monokai Blue
+
+# : }}}
+
+
+# : Tasks {{{
+
+[tasks]
+border  = { fg = "#66D9EF" } # Monokai Blue
+title   = {}
+hovered = { fg = "#F92672", underline = true } # Monokai Pink/Red
+
+# : }}}
+
+
+# : Which {{{
+
+[which]
+mask            = { bg = "#3E3D32" } # Monokai Darker BG
+cand            = { fg = "#A6E22E" } # Monokai Green
+rest            = { fg = "#75715E" } # Monokai Comment/Subtle
+desc            = { fg = "#66D9EF" } # Monokai Blue
+separator       = "  "
+separator_style = { fg = "#75715E" } # Monokai Comment/Subtle
+
+# : }}}
+
+
+# : Help {{{
+
+[help]
+on      = { fg = "#A6E22E" } # Monokai Green
+run     = { fg = "#F92672" } # Monokai Pink/Red
+hovered = { reversed = true, bold = true }
+footer  = { fg = "#3E3D32", bg = "#F8F8F2" } # Monokai Darker BG / Foreground
+
+# : }}}
+
+
+# : Notify {{{
+
+[notify]
+title_info  = { fg = "#A6E22E" } # Monokai Green
+title_warn  = { fg = "#E6DB74" } # Monokai Yellow
+title_error = { fg = "#F92672" } # Monokai Pink/Red
+
+# : }}}
+
+
+# : File-specific styles {{{
+
+[filetype]
+
+rules = [
+	# Images
+	{ mime = "image/*", fg = "#A6E22E" }, # Monokai Green
+
+	# Media
+	{ mime = "{audio,video}/*", fg = "#E6DB74" }, # Monokai Yellow
+
+	# Archives
+	{ mime = "application/{zip,rar,7z*,tar,gzip,xz,zstd,bzip*,lzma,compress,archive,cpio,arj,xar,ms-cab*}", fg = "#AE81FF" }, # Monokai Purple
+
+	# Documents
+	{ mime = "application/{pdf,doc,rtf}", fg = "#66D9EF" }, # Monokai Blue
+
+	# Fallback
+	{ name = "*", fg = "#F8F8F2" }, # Monokai Foreground
+	{ name = "*/", fg = "#66D9EF", bold = true } # Monokai Blue (Directories)
+]
+
+# : }}}

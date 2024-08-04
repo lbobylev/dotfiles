@@ -1,0 +1,56 @@
+[[opener.edit]]
+run = 'nvim "$@"'
+block = true
+for = "unix"
+
+[[opener.play]]
+run = 'open -a VLC "$@"'
+orphan = true
+for = "macos"
+
+[[opener.unzip]]
+run = 'unzip "$@"'
+orphan = true
+for = "macos"
+
+[[open.prepend_rules]]
+name = "*.zip"
+use = "unzip"
+
+[[open.prepend_rules]]
+name = "*.txt"
+use = "edit"
+
+[[open.prepend_rules]]
+name = "*.xlsx"
+use = "open -a 'Microsoft Excel' $1"
+
+# mount iso
+[[open.prepend_rules]]
+name = "*.iso"
+use = "hdiutil attach $1"
+
+[plugin]
+prepend_previewers = [
+    { name = "*.md", run = "glow" },
+    # Archive previewer
+    { mime = "application/*zip", run = "ouch" },
+    { mime = "application/x-tar", run = "ouch" },
+    { mime = "application/x-bzip2", run = "ouch" },
+    { mime = "application/x-7z-compressed", run = "ouch" },
+    { mime = "application/x-rar", run = "ouch" },
+    { mime = "application/x-xz", run = "ouch" },
+    { mime = "application/xz", run = "ouch" },
+
+    # Replace magick, image, video with mediainfo
+    { mime = "{audio,video,image}/*", run = "mediainfo" },
+    { mime = "application/subrip", run = "mediainfo" },
+]
+prepend_preloaders = [
+    # Replace magick, image, video with mediainfo
+    { mime = "{audio,video,image}/*", run = "mediainfo" },
+    { mime = "application/subrip", run = "mediainfo" },
+]
+# There are more extensions which are supported by mediainfo.
+# Just add file's MIME type to `previewers`, `preloaders` above.
+# https://mediaarea.net/en/MediaInfo/Support/Formats

@@ -1,0 +1,350 @@
+#!/bin/bash
+
+if [ $# -lt 1 ]; then
+    echo "Usage: $0 <command> [args]"
+    exit 1
+fi
+
+command=$1
+args="${@:2}"
+src_dir="/Users/leonid/src"
+# src_dir="/home/ubuntu/src"
+
+update_gradle_version() {
+    local new_version="$1"
+    local unified_version="$2"  # Get the unified version from the second argument
+    local gradle_file="build.gradle"
+
+    if [[ ! -f "$gradle_file" ]]; then
+        echo "Error: $gradle_file not found!"
+        exit 1
+    fi
+
+    perl -pi -e "s/version = '[^']*'/version = '$new_version'/" "$gradle_file"
+
+    if [[ -n "$unified_version" ]]; then
+        #perl -pi -e "s/\(implementation 'eu.surgetech.core:surge-app-unified:\)[^']*'/\1$unified_version'/" "$gradle_file"
+        sed -i '' "s/\(implementation 'eu\.surgetech\.core\:surge-app-unified:\)[^']*'/\1$unified_version'/" "$gradle_file"
+    fi
+
+    if [[ $? -ne 0 ]]; then
+        echo "Error: Failed to update version in $gradle_file"
+        exit 1
+    fi
+
+    echo "Updated version to $new_version in $gradle_file"
+    if [[ -n "$unified_version" ]]; then
+        echo "Updated unified version to $unified_version in $gradle_file"
+    fi
+}
+
+update_package_version() {
+    local new_version="$1"
+    local type="$2"
+
+    if [[ ! -f "package.json" ]]; then
+        echo "Error: package.json not found!"
+        exit 1
+    fi
+
+    if [[ "$type" == "npm" ]]; then
+        npm version "$new_version" --no-git-tag-version
+    elif [[ "$type" == "yarn" ]]; then
+        yarn version --new-version "$new_version"
+    else
+        echo "Error: Invalid package manager type: $type"
+        exit 1
+    fi
+
+    if [[ $? -ne 0 ]]; then
+        echo "Error: Failed to update version in package.json"
+        exit 1
+    fi
+
+    echo "Updated version to $new_version in package.json"
+}
+
+calculate_new_version() {
+    local current_version="$1"
+    local version_type="$2"
+
+    if [[ "$current_version" =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)(-([a-z0-9]+)(\.([0-9]+))?)?$ ]]; then
+        major="${BASH_REMATCH[1]}"
+        minor="${BASH_REMATCH[2]}"
+        patch="${BASH_REMATCH[3]}"
+        suffix="${BASH_REMATCH[5]}"
+        last_number="${BASH_REMATCH[7]}"
+
+        if [[ -n "$suffix" && -n "$last_number" ]]; then
+            ((last_number++))
+            echo "$major.$minor.$patch-$suffix.$last_number"
+        else
+            case "$version_type" in
+                patch)
+                    ((patch++))
+                    ;;
+                minor)
+                    ((minor++))
+                    patch=0
+                    ;;
+                major)
+                    ((major++))
+                    minor=0
+                    patch=0
+                    ;;
+                *)
+                    echo "Invalid version: $version_type"
+                    exit 1
+                    ;;
+            esac
+            v="$major.$minor.$patch"
+            if [[ -n "$suffix" ]]; then
+                v+="-${suffix}"
+            fi
+            echo "$v"
+        fi
+    else
+        echo "Error: Current version does not match expected format."
+        exit 1
+    fi
+}
+
+function update_app_version() {
+    local file=$1
+    local new_version=$2
+
+    if [[ -f $file ]]; then
+        old_version=$(perl -ne 'if (/image:/ .. /tag:/) { if (/tag:\s*(\S+)/) { print $1; } }' "$file" | tail -n 1)
+
+        if [ -z "$old_version" ]; then
+            echo "Old version not found."
+            exit 1
+        fi
+
+        perl -pi -e "s/\Q$old_version\E/$new_version/g" "$file"
+        echo "Replaced '$old_version' with '$new_version' in $file"
+    else
+        echo "File $file does not exist."
+    fi
+}
+
+function update_player_apps() {
+    app_name="$1"
+    type="$2"
+    new_version="$3"
+
+    eyedes=("kering")
+    eyeman=("trisottica" "omas" "trenti" "modesign" "delta" "mistral" "visard" "spectacles" "arts-optical" "safilo")
+    plasman=("mazzucchelli" "laes" "jimei" "wenzhou-yingtan-jinyu-plastic")
+    lenmak=("zeiss" "zeiss-apac" "lapo" "barberini" "divel")
+    caseman=("fedon" "cafiero" "brandart" "gatto-astucci")
+    cmpman=("df" "visottica" "ookii" "libera" "obe" "eurodecori" "comotec-oreilly" "decori2m" "fotomeccanica" "reply" "netclaz" "grimont" "ideal" "da-via-luigi")
+    galvman=("galvanico" "redox" "gts" "eurofin" "crisalide")
+    ceraut=("certottica")
+
+    case "$app_name" in
+      eyeman)
+        apps=("${eyeman[@]}")
+        ;;
+      eyedes)
+        apps=("${eyedes[@]}")
+        ;;
+      ceraut)
+        apps=("${ceraut[@]}")
+        ;;
+      plasman)
+        apps=("${plasman[@]}")
+        ;;
+      lenmak)
+        apps=("${lenmak[@]}")
+        ;;
+      caseman)
+        apps=("${caseman[@]}")
+        ;;
+      cmpman)
+        apps=("${cmpman[@]}")
+        ;;
+      galvman)
+        apps=("${galvman[@]}")
+        ;;
+      *)
+        echo "Unknown group: $app_name. Available groups: eyeman, plasman, lenmak, caseman, cmpman, galvman."
+        exit 1
+        ;;
+    esac
+
+    echo "$app_name-$type $new_version"
+
+    for app in "${apps[@]}"; do
+      file="${app}-${type}.yaml"
+      update_app_version "$file" "$new_version"
+    done
+
+    echo "Replacement complete."
+}
+
+if [ "$command" == 'build' ]; then
+    version_type="${2-patch}"
+
+    if ! git rev-parse --is-inside-work-tree &>/dev/null; then
+        echo "Warning: Not in a Git repository. Branch name will not be available."
+        exit 1
+    else
+        branch_name="${4-$(git rev-parse --abbrev-ref HEAD)}"
+    fi
+
+    git checkout "$branch_name"
+    git pull origin "$branch_name"
+
+    if [ -f "build.gradle" ]; then
+        current_version=$(grep "version = '" build.gradle | awk -F"'" '{print $2}')
+        new_version=$(calculate_new_version "$current_version" "$version_type" "$branch_name")
+        unified_version="$3"
+        #printf "Current version: %s\nNew version: %s\n" "$current_version" "$new_version" "$unified_version"
+        update_gradle_version "$new_version" "$unified_version"
+        git add build.gradle
+        git commit -m "build: $new_version"
+    elif [ -f "package.json" ]; then
+        current_version=$(jq -r '.version' package.json)
+        new_version=$(calculate_new_version "$current_version" "$version_type" "$branch_name")
+        if [[ -f "package-lock.json" ]]; then
+            update_package_version "$new_version" "npm"
+            git add package.json package-lock.json
+            git commit -m "build: $new_version"
+        elif [[ -f "yarn.lock" ]]; then
+            update_package_version "$new_version" "yarn"
+        else
+            echo "Error: package-lock.json or yarn.lock not found!"
+            exit 1
+        fi
+    fi
+
+    git push origin "$branch_name"
+elif [ "$command" == 'deploy' ]; then
+    echo "$3" | tr ' ' '\n' | while IFS=: read -r app version; do
+        curr_dir=$(pwd)
+        env="$2"
+        app_name=$(echo "$app" | perl -pe 's/-.*//')
+        app_type=$(echo "$app" | perl -pe 's/.*-//')
+
+        env_="$env"
+        if [ "$env" == 'shared' ]; then
+            env_='prod'
+        fi
+
+        repo_dir="$src_dir/adm-k8s-kering-$env"
+
+        if [ "$app_name" == "vm" ]; then
+            if [ "$app_type" == "web" ]; then
+                file="frontend.yaml"
+            elif [ "$app_type" == "app" ]; then
+                file="backend.yaml"
+            else
+                echo "Invalid app type: $app_type"
+                exit 1
+            fi
+
+            cd "$src_dir/adm-k8s-kering-$env/surge-apps/vm-$env" || exit
+            pwd
+            git pull origin master
+            update_app_version "$file" "$version"
+
+        else
+            if [ "$app_name" == 'cc' ]; then
+                cd "$repo_dir" || exit
+                git pull origin master
+
+                if [ "$env" != 'dev' ]; then
+                    cd "$repo_dir/surge-apps/kering-$env_-fab" || exit
+                    pwd
+                    update_app_version "kering-chaincode.yaml" "$version"
+                fi
+
+                cd "$repo_dir/surge-apps/shared-$env_-fab" || exit
+                pwd
+                update_app_version "shared-chaincode.yaml" "$version"
+
+                cd "$repo_dir" || exit
+                commit_msg="ci: update chaincode $version"
+
+            else
+                if [ "$env" != 'dev' ] && [ "$app_name" == 'eyedes' ]; then
+                    dir="kering-"
+                else
+                    dir="shared-"
+                fi
+                if [ "$env" == 'shared' ]; then
+                    dir+="prod"
+                else
+                    dir+="$env"
+                fi
+
+                cd "$repo_dir/surge-apps/$dir" || exit
+                pwd
+                git pull origin master
+                update_player_apps "$app_name" "$app_type" "$version"
+                commit_msg="ci: update $app_name $app_type $version"
+            fi
+
+        fi
+
+        git add .
+        git commit -m "$commit_msg"
+        git push origin master
+        cd "$curr_dir" || exit
+
+    done
+
+elif [ "$command" == 'refresh' ]; then
+    shift # Remove the 'refresh' command from the arguments
+
+    while getopts "e:o:i:x:" opt; do
+        case $opt in
+            e)
+                env="$OPTARG"
+                ;;
+            o)
+                org="$OPTARG"
+                ;;
+            i)
+                include="$OPTARG"
+                ;;
+            x)
+                exclude="$OPTARG"
+                ;;
+            *)
+                echo "Usage: $0 refresh -e <env> [-o <org>] [-i <include>] [-x <exclude>]"
+                exit 1
+                ;;
+        esac
+    done
+
+    if [[ -z "$env" ]]; then
+        echo "Error: -e option is required."
+        exit 1
+    fi
+
+    cmd="./refreshCache.py --env=$env"
+
+    if [[ -n "$org" ]]; then
+        cmd+=" --org=$org"
+    fi
+
+    if [[ -n "$include" ]]; then
+        cmd+=" --include=$include"
+    fi
+
+    if [[ -n "$exclude" ]]; then
+        cmd+=" --exclude=$exclude"
+    fi
+
+    cd "$src_dir/random-scripts/ucache.py"
+    echo "$cmd"
+    eval "$cmd"
+fi
+
+if [ $? -ne 0 ]; then
+    echo "Error executing surge command '$command'."
+    exit 1
+fi
+exit 0

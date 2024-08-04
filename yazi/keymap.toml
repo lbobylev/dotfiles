@@ -1,0 +1,20 @@
+[[manager.prepend_keymap]]
+on = [",", "s"]
+run = "plugin what-size"
+desc = "Calc size of selection or cwd"
+
+[[manager.prepend_keymap]]
+on = [",", "y"]
+run = "plugin system-clipboard"
+desc = "Copy file to clipboard"
+
+[[manager.prepend_keymap]]
+on = [",", "c"]
+run = "plugin ouch"
+desc = "Compress with ouch"
+
+
+[[manager.prepend_keymap]]
+on = ["l"]
+run = "plugin fast-enter"
+desc = "Enter the subfolder faster, or open the file directly"
