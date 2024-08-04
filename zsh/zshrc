@@ -107,6 +107,7 @@ alias gtd="git diff"
 alias gtc="git commit -m"
 alias gtl="git log --pretty=oneline"
 alias gpo="git push origin"
+alias gts="git status"
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
