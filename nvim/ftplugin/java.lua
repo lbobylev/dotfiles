@@ -80,7 +80,9 @@ local on_attach = function(client, bufnr)
     dap.listeners.before.event_exited.dapui_config = function()
         dapui.close()
     end
-    
+
+    -- исправляет проблему с проектами surge
+    jdtls.update_project_config()
 end
 
 local tools_dir = home .. '/.local/share/nvim/mason/share'
@@ -215,11 +217,11 @@ local config = {
 
         -- The jar file is located where jdtls was installed. This will need to be updated
         -- to the location where you installed jdtls
-        '-jar', vim.fn.glob(home .. '/.local/share/nvim/mason/share/jdtls/plugins/org.eclipse.equinox.launcher_*.jar'),
+        '-jar', vim.fn.glob(tools_dir .. '/jdtls/plugins/org.eclipse.equinox.launcher_*.jar'),
 
         -- The configuration for jdtls is also placed where jdtls was installed. This will
         -- need to be updated depending on your environment
-        '-configuration', home .. '/.local/share/nvim/mason/share/jdtls/config',
+        '-configuration', tools_dir .. '/jdtls/config',
 
         -- Use the workspace_folder defined above to store data for this project
         '-data', workspace_folder,
