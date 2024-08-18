@@ -25,11 +25,14 @@ call plug#begin()
   Plug 'williamboman/mason-lspconfig.nvim'
   Plug 'neovim/nvim-lspconfig'
   Plug 'lewis6991/gitsigns.nvim'
+  Plug 'akinsho/bufferline.nvim', { 'tag': '*' }
 call plug#end()
 
 colorscheme catppuccin-mocha " catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha
 
 lua << EOF
+
+require("bufferline").setup{}
 
 require('telescope').setup({
   defaults = {
@@ -41,13 +44,15 @@ require('telescope').setup({
     },
     dynamic_preview_title = true,
   },
+  pickers = {
+      find_files = { no_ignore = false, hidden = false }
+  },
   extensions = {
     fzf = {
       fuzzy = true,                    -- false will only do exact matching
       override_generic_sorter = true,  -- override the generic sorter
       override_file_sorter = true,     -- override the file sorter
       case_mode = "smart_case",        -- or "ignore_case" or "respect_case"
-                                       -- the default case_mode is "smart_case"
     }
   }
 })
@@ -76,6 +81,7 @@ local tree_on_attach = function(bufnr)
     local api = require "nvim-tree.api"
     -- default mappings
     api.config.mappings.default_on_attach(bufnr)
+    vim.keymap.set('n', '<space>th', api.tree.toggle_help)
 end
 
 require("nvim-tree").setup({
@@ -89,7 +95,7 @@ require("nvim-tree").setup({
     group_empty = true,
   },
   filters = {
-    dotfiles = true,
+    dotfiles = false,
   },
   on_attach = tree_on_attach
 })

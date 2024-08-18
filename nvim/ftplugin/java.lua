@@ -1,5 +1,6 @@
 local home = os.getenv('HOME')
 local jdtls = require('jdtls')
+local os = require('os')
 
 -- File types that signify a Java project's root directory. This will be
 -- used by eclipse to determine what constitutes a workspace
@@ -10,7 +11,8 @@ local root_dir = require('jdtls.setup').find_root(root_markers)
 -- with multiple different projects, each project must use a dedicated data directory.
 -- This variable is used to configure eclipse to use the directory name of the
 -- current project found using the root_marker as the folder for project specific data.
-local workspace_folder = home .. "/.local/share/eclipse/" .. vim.fn.fnamemodify(root_dir, ":p:h:t")
+local project_folder = vim.fn.fnamemodify(root_dir, ":p:h:t")
+local workspace_folder = home .. "/.local/share/eclipse/" .. project_folder
 
 -- Helper function for creating keymaps
 function nnoremap(rhs, lhs, bufopts, desc)
@@ -80,11 +82,9 @@ local on_attach = function(client, bufnr)
     dap.listeners.before.event_exited.dapui_config = function()
         dapui.close()
     end
-
-    -- исправляет проблему с проектами surge
-    jdtls.update_project_config()
 end
 
+local jdtls_dir = home .. '/src/eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/repository'
 local tools_dir = home .. '/.local/share/nvim/mason/share'
 local bundles = {
     vim.fn.glob(tools_dir .. '/java-debug-adapter/com.microsoft.java.debug.plugin-0.53.0.jar'),
@@ -217,16 +217,27 @@ local config = {
 
         -- The jar file is located where jdtls was installed. This will need to be updated
         -- to the location where you installed jdtls
-        '-jar', vim.fn.glob(tools_dir .. '/jdtls/plugins/org.eclipse.equinox.launcher_*.jar'),
+        -- '-jar', vim.fn.glob(tools_dir .. '/jdtls/plugins/org.eclipse.equinox.launcher_*.jar'),
+        '-jar', vim.fn.glob(jdtls_dir .. '/plugins/org.eclipse.equinox.launcher_*.jar'),
 
         -- The configuration for jdtls is also placed where jdtls was installed. This will
         -- need to be updated depending on your environment
-        '-configuration', tools_dir .. '/jdtls/config',
+        -- '-configuration', tools_dir .. '/jdtls/config',
+        '-configuration', jdtls_dir .. '/config_mac',
 
         -- Use the workspace_folder defined above to store data for this project
         '-data', workspace_folder,
     },
 }
+
+
+local filename = home .. '/src/' .. project_folder .. '/.classpath'
+local success, err = os.remove(filename)
+--[[if success then
+    vim.notify('File "' .. filename .. '" deleted successfully.', vim.log.levels.INFO)
+else
+    vim.notify('Failed to delete file "' .. filename .. '": ' .. err, vim.log.levels.ERROR)
+end]]
 
 -- Finally, start jdtls. This will run the language server using the configuration we specified,
 -- setup the keymappings, and attach the LSP client to the current buffer
