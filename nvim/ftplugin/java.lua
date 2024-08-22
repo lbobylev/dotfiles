@@ -231,8 +231,8 @@ local config = {
 }
 
 
-local filename = home .. '/src/' .. project_folder .. '/.classpath'
-local success, err = os.remove(filename)
+-- local filename = home .. '/src/' .. project_folder .. '/.classpath'
+-- local success, err = os.remove(filename)
 --[[if success then
     vim.notify('File "' .. filename .. '" deleted successfully.', vim.log.levels.INFO)
 else

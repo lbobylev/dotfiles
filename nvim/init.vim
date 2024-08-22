@@ -58,7 +58,22 @@ require('telescope').setup({
 })
 
 local builtin = require('telescope.builtin')
-vim.keymap.set('n', '<space>ff', builtin.find_files, {})
+vim.keymap.set('n', '<space>ff', function()
+    local src_dir = '/Users/leonid/src'
+    local cwd = vim.fn.getcwd()
+    if cwd == src_dir .. '/ewc-app-galvman'
+        or cwd == src_dir .. '/ewc-app-eyedes'
+        or cwd == src_dir .. '/ewc-app-eyeman' then
+        builtin.find_files({
+            search_dirs = {
+                cwd,
+                src_dir .. '/surge-app-core',
+                src_dir .. '/front-app-core',
+                src_dir .. '/front-app-ewc'
+            }
+        })
+    end
+end, {})
 vim.keymap.set('n', '<space>fg', builtin.live_grep, {})
 vim.keymap.set('n', '<space>fb', builtin.buffers, {})
 vim.keymap.set('n', '<space>fh', builtin.help_tags, {})
