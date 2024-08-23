@@ -26,11 +26,19 @@ call plug#begin()
   Plug 'neovim/nvim-lspconfig'
   Plug 'lewis6991/gitsigns.nvim'
   Plug 'akinsho/bufferline.nvim', { 'tag': '*' }
+  Plug 'numToStr/Comment.nvim'
+  Plug 'windwp/nvim-autopairs'
 call plug#end()
 
 colorscheme catppuccin-mocha " catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha
 
 lua << EOF
+
+require('nvim-autopairs').setup({
+  --disable_filetype = { "TelescopePrompt" , "vim" },
+})
+
+require('Comment').setup()
 
 require("bufferline").setup{}
 
