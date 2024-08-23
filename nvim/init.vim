@@ -69,18 +69,20 @@ local builtin = require('telescope.builtin')
 vim.keymap.set('n', '<space>ff', function()
     local src_dir = '/Users/leonid/src'
     local cwd = vim.fn.getcwd()
+    local opts = {}
     if cwd == src_dir .. '/ewc-app-galvman'
         or cwd == src_dir .. '/ewc-app-eyedes'
         or cwd == src_dir .. '/ewc-app-eyeman' then
-        builtin.find_files({
+        opts = {
             search_dirs = {
                 cwd,
                 src_dir .. '/surge-app-core',
                 src_dir .. '/front-app-core',
                 src_dir .. '/front-app-ewc'
             }
-        })
+        }
     end
+    builtin.find_files(opts)
 end, {})
 vim.keymap.set('n', '<space>fg', builtin.live_grep, {})
 vim.keymap.set('n', '<space>fb', builtin.buffers, {})
@@ -129,6 +131,7 @@ require("mason").setup()
 require("mason-lspconfig").setup({
   ensure_installed = {
     'tsserver',
+    'efm',
     'bashls',
     'cssls',
     'html',
@@ -151,10 +154,43 @@ end
 
 require('mason-lspconfig').setup_handlers({
   function (server_name )
-    if server_name ~= 'jdtls' then
+    if server_name == 'jdtls' then
+        -- do nothing
+    elseif server_name == 'efm' then
+        local config = {{ formatCommand = './node_modules/.bin/prettier --stdin-filepath ${INPUT}', formatStdin = true }}
+        lspconfig.efm.setup {
+            init_options = { documentFormatting = true },
+            filetypes = { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' },
+            settings = {
+              rootMarkers = { ".git/" },
+              languages = {
+                  typescript = config,
+                  javascript = config, 
+                  typescriptreact = config,
+                  javascriptreact = config,
+              }
+            }
+        }
+        vim.cmd('command! -nargs=0 Prettier :lua vim.lsp.buf.format()')
+        vim.cmd([[
+          augroup FormatAutogroup
+            autocmd!
+            autocmd BufWritePost *.js,*.ts,*.jsx,*.tsx Prettier
+          augroup END
+        ]])
+    elseif server_name == 'tsserver' then
+      lspconfig.tsserver.setup {
+          on_attach = function(client, bufnr)
+              client.server_capabilities.documentFormattingProvider = false
+              client.server_capabilities.documentRangeFormattingProvider = false
+              lsp_attach(client, bufnr)
+          end,
+          capabilities = lsp_capabilities
+      }
+    else
       lspconfig[server_name].setup({
-        on_attach = lsp_attach,
-        capabilities = lsp_capabilities
+          on_attach = lsp_attach,
+          capabilities = lsp_capabilities
       })
     end
   end
@@ -168,8 +204,7 @@ cmp.setup {
     { name = 'vsnip' },
   },
   snippet = {
-    expand = function(args)
-      vim.fn["vsnip#anonymous"](args.body) -- because we are using the vsnip cmp plugin
+    expand = function(args) vim.fn["vsnip#anonymous"](args.body) -- because we are using the vsnip cmp plugin
     end,
   },
   mapping = cmp.mapping.preset.insert({
