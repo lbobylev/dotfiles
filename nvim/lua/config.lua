@@ -12,6 +12,35 @@ require("catppuccin").setup({
     }
 })
 
+-- require 'nvim-treesitter.configs'.setup {
+--     ensure_installed = { "java", "typescript", "tsx", "javascript" }, -- Установите необходимые языки
+--     highlight = {
+--         enable = true,                                              -- Включает подсветку синтаксиса на основе Treesitter
+--     },
+--     indent = {
+--         enable = true, -- Включает автоматическое выравнивание
+--     },
+--     folding = {
+--         enable = true, -- Включает сворачивание на основе Treesitter
+--     },
+-- }
+-- -- Устанавливаем метод сворачивания на основе выражений
+-- vim.o.foldmethod = 'expr'
+-- vim.o.foldexpr = 'nvim_treesitter#foldexpr()'
+-- -- Открытие всех блоков по умолчанию (сначала все будет развернуто)
+-- vim.o.foldlevel = 99
+
+vim.o.foldcolumn = '1' -- Указывает, сколько колонок отводить под индикаторы сворачивания
+vim.o.foldlevel = 99   -- Уровень сворачивания (99 означает, что код изначально не свернут)
+vim.o.foldlevelstart = 99
+vim.o.foldenable = true
+
+require('ufo').setup({
+    provider_selector = function(bufnr, filetype, buftype)
+        return { 'treesitter', 'indent' }
+    end
+})
+
 require('nvim-autopairs').setup({
     --disable_filetype = { "TelescopePrompt" , "vim" },
 })
