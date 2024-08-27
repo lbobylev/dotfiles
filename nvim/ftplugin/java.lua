@@ -63,7 +63,7 @@ local on_attach = function(client, bufnr)
     end, opts, "Scopes")
     nnoremap('<space>df', '<cmd>Telescope dap frames<cr>', opts, "List frames")
     nnoremap('<space>dh', '<cmd>Telescope dap commands<cr>', opts, "List commands")
-    nnoremap('<space>du', "<cmd>lua require'dapui'.toggle()<cr>", opts)
+    --nnoremap('<space>du', "<cmd>lua require'dapui'.toggle()<cr>", opts)
 
     nnoremap("<space>tc", jdtls.test_class, opts, "Test class (DAP)")
     nnoremap("<space>m", jdtls.test_nearest_method, opts, "Test method (DAP)")

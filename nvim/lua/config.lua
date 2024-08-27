@@ -72,15 +72,11 @@ require('telescope').setup({
     }
 })
 
-local builtin = require('telescope.builtin')
-vim.keymap.set('n', '<space>ff', function()
+local get_opts = function()
     local src_dir = '/Users/leonid/src'
     local cwd = vim.fn.getcwd()
-    local opts = {}
-    if cwd == src_dir .. '/ewc-app-galvman'
-        or cwd == src_dir .. '/ewc-app-eyedes'
-        or cwd == src_dir .. '/ewc-app-eyeman' then
-        opts = {
+    if string.match(cwd, '^' .. src_dir .. '/ewc%-app%-.+$') then
+        return {
             search_dirs = {
                 cwd,
                 src_dir .. '/surge-app-core',
@@ -89,9 +85,16 @@ vim.keymap.set('n', '<space>ff', function()
             }
         }
     end
-    builtin.find_files(opts)
+    return {}
+end
+
+local builtin = require('telescope.builtin')
+vim.keymap.set('n', '<space>ff', function()
+    builtin.find_files(get_opts())
 end, {})
-vim.keymap.set('n', '<space>fg', builtin.live_grep, {})
+vim.keymap.set('n', '<space>fg', function()
+    builtin.live_grep(get_opts())
+end, {})
 vim.keymap.set('n', '<space>fb', builtin.buffers, {})
 vim.keymap.set('n', '<space>fh', builtin.help_tags, {})
 
@@ -293,3 +296,5 @@ require('gitsigns').setup {
         map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
     end
 }
+
+vim.keymap.set('n', '<space>du', require'dapui'.toggle)
