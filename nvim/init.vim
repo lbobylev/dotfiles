@@ -34,6 +34,8 @@ call plug#begin()
 call plug#end()
 
 colorscheme catppuccin-mocha " catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha
+nnoremap <Space>n :bn<CR>
+nnoremap <Space>p :bp<CR>
 
 lua << EOF
 require('config')
