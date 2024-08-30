@@ -298,3 +298,5 @@ require('gitsigns').setup {
 }
 
 vim.keymap.set('n', '<space>du', require'dapui'.toggle)
+
+require 'jdtl_config'

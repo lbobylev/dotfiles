@@ -229,15 +229,12 @@ local config = {
     },
 }
 
-
--- local filename = home .. '/src/' .. project_folder .. '/.classpath'
--- local success, err = os.remove(filename)
---[[if success then
-    vim.notify('File "' .. filename .. '" deleted successfully.', vim.log.levels.INFO)
-else
-    vim.notify('Failed to delete file "' .. filename .. '": ' .. err, vim.log.levels.ERROR)
-end]]
-
--- Finally, start jdtls. This will run the language server using the configuration we specified,
--- setup the keymappings, and attach the LSP client to the current buffer
-jdtls.start_or_attach(config)
+-- Создаем автокоманду для файлов Java
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "java",
+    callback = function()
+        -- Finally, start jdtls. This will run the language server using the configuration we specified,
+        -- setup the keymappings, and attach the LSP client to the current buffer
+        jdtls.start_or_attach(config)
+    end,
+})
