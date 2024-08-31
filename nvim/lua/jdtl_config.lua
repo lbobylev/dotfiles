@@ -84,31 +84,10 @@ local on_attach = function(client, bufnr)
 end
 
 local jdtls_dir = home .. '/src/eclipse.jdt.ls/org.eclipse.jdt.ls.product/target/repository'
-local tools_dir = home .. '/.local/share/nvim/mason/share'
 local bundles = {
-    vim.fn.glob(tools_dir .. '/java-debug-adapter/com.microsoft.java.debug.plugin-0.53.0.jar'),
-    vim.fn.glob(tools_dir .. '/java-test/com.microsoft.java.test.plugin-0.41.1.jar'),
-    -- vim.fn.glob(tools_dir .. '/java-test/jacocoagent.jar'),
-    -- vim.fn.glob(tools_dir .. '/java-test/com.microsoft.java.test.runner-jar-with-dependencies.jar'),
-    vim.fn.glob(tools_dir .. '/java-test/junit-jupiter-api_5.9.3.jar'),
-    vim.fn.glob(tools_dir .. '/java-test/junit-jupiter-engine_5.9.3.jar'),
-    vim.fn.glob(tools_dir .. '/java-test/junit-jupiter-migrationsupport_5.9.3.jar'),
-    vim.fn.glob(tools_dir .. '/java-test/junit-jupiter-params_5.9.3.jar'),
-    vim.fn.glob(tools_dir .. '/java-lest/junit-platform-commons_1.9.3.jar'),
-    vim.fn.glob(tools_dir .. '/java-lest/junit-platform-engine_1.9.3.jar'),
-    vim.fn.glob(tools_dir .. '/java-lest/junit-platform-launcher_1.9.3.jar'),
-    vim.fn.glob(tools_dir .. '/java-lest/junit-platform-runner_1.9.3.jar'),
-    vim.fn.glob(tools_dir .. '/java-lest/junit-platform-suite-api_1.9.3.jar'),
-    vim.fn.glob(tools_dir .. '/java-lest/junit-platform-suite-commons_1.9.3.jar'),
-    vim.fn.glob(tools_dir .. '/java-lest/junit-platform-suite-engine_1.9.3.jar'),
-    vim.fn.glob(tools_dir .. '/java-lest/junit-vintage-engine_5.9.3.jar'),
-    vim.fn.glob(tools_dir .. '/java-lest/org.apiguardian.api_1.1.2.jar'),
-    vim.fn.glob(tools_dir .. '/java-lest/org.eclipse.jdt.junit4.runtime_1.3.0.v20220609-1843.jar'),
-    vim.fn.glob(tools_dir .. '/java-lest/org.eclipse.jdt.junit5.runtime_1.1.100.v20220907-0450.jar'),
-    vim.fn.glob(tools_dir .. '/java-lest/org.opentest4j_1.2.0.jar'),
-    vim.fn.glob(tools_dir .. '/java-lest/org.jacoco.core_0.8.12.202403310830.jar'),
+    vim.fn.glob(home .. '/src/java-debug/com.microsoft.java.debug.plugin/target/com.microsoft.java.debug.plugin-*.jar'),
 }
--- vim.list_extend(bundles, vim.split(vim.fn.glob(tools_dir .. '/java-test/*.jar', 1), "\n"))
+vim.list_extend(bundles, vim.split(vim.fn.glob(home .. '/src/vscode-java-test/server/*.jar', 1), "\n"))
 
 local config = {
     flags = {
