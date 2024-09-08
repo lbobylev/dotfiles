@@ -28,9 +28,9 @@ call plug#begin()
   Plug 'akinsho/bufferline.nvim', { 'tag': '*' }
   Plug 'numToStr/Comment.nvim'
   Plug 'windwp/nvim-autopairs'
-  "Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
   Plug 'kevinhwang91/promise-async'
   Plug 'kevinhwang91/nvim-ufo'
+  Plug 'tzachar/cmp-tabnine', { 'do': './install.sh' }
 call plug#end()
 
 colorscheme catppuccin-mocha " catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha

@@ -12,29 +12,34 @@ require("catppuccin").setup({
     }
 })
 
--- require 'nvim-treesitter.configs'.setup {
---     ensure_installed = { "java", "typescript", "tsx", "javascript" }, -- Установите необходимые языки
---     highlight = {
---         enable = true,                                              -- Включает подсветку синтаксиса на основе Treesitter
---     },
---     indent = {
---         enable = true, -- Включает автоматическое выравнивание
---     },
---     folding = {
---         enable = true, -- Включает сворачивание на основе Treesitter
---     },
--- }
--- -- Устанавливаем метод сворачивания на основе выражений
--- vim.o.foldmethod = 'expr'
--- vim.o.foldexpr = 'nvim_treesitter#foldexpr()'
--- -- Открытие всех блоков по умолчанию (сначала все будет развернуто)
--- vim.o.foldlevel = 99
+require('cmp_tabnine.config'):setup({
+    max_lines = 1000,
+    max_num_results = 20,
+    sort = true,
+    run_on_every_keystroke = true,
+    snippet_placeholder = '..',
+    ignored_file_types = {
+        -- default is not to ignore
+        -- uncomment to ignore in lua:
+        -- lua = true
+    },
+    show_prediction_strength = false,
+    min_percent = 0
+})
+vim.api.nvim_set_hl(0, "CmpItemKindTabNine", { fg = "#6CC644" })
+local prefetch = vim.api.nvim_create_augroup("prefetch", { clear = true })
+vim.api.nvim_create_autocmd('BufRead', {
+    group = prefetch,
+    pattern = { '*.py', '*.lua', '*.java', '*.ts', '*.tsx', '*.js', '*.jsx' },
+    callback = function()
+        require('cmp_tabnine'):prefetch(vim.fn.expand('%:p'))
+    end
+})
 
 vim.o.foldcolumn = '1' -- Указывает, сколько колонок отводить под индикаторы сворачивания
 vim.o.foldlevel = 99   -- Уровень сворачивания (99 означает, что код изначально не свернут)
 vim.o.foldlevelstart = 99
 vim.o.foldenable = true
-
 require('ufo').setup({
     provider_selector = function(bufnr, filetype, buftype)
         return { 'treesitter', 'indent' }
@@ -100,9 +105,9 @@ vim.keymap.set('n', '<space>fh', builtin.help_tags, {})
 
 require('telescope').load_extension('fzf')
 
-require('lualine').setup {
+require('lualine').setup({
     options = { theme = 'catppuccin' },
-}
+})
 
 -- nvim-tree
 -- disable netrw at the very start of your init.lua
@@ -213,12 +218,28 @@ require('mason-lspconfig').setup_handlers({
     end
 })
 
+local compare = require('cmp.config.compare')
 local cmp = require('cmp')
 cmp.setup {
     sources = {
+        { name = 'cmp_tabnine' },
         { name = 'nvim_lsp' },
         { name = 'nvim_lsp_signature_help' },
         { name = 'vsnip' },
+    },
+    sorting = {
+        priority_weight = 2,
+        comparators = {
+            require('cmp_tabnine.compare'),
+            compare.offset,
+            compare.exact,
+            compare.score,
+            compare.recently_used,
+            compare.kind,
+            compare.sort_text,
+            compare.length,
+            compare.order,
+        },
     },
     snippet = {
         expand = function(args)
@@ -297,6 +318,6 @@ require('gitsigns').setup {
     end
 }
 
-vim.keymap.set('n', '<space>du', require'dapui'.toggle)
+vim.keymap.set('n', '<space>du', require 'dapui'.toggle)
 
 require 'jdtl_config'
