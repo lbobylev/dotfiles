@@ -33,6 +33,8 @@ call plug#begin()
   Plug 'tzachar/cmp-tabnine', { 'do': './install.sh' }
   Plug 'folke/trouble.nvim'
   Plug 'nvim-pack/nvim-spectre'
+  Plug 'goolord/alpha-nvim'
+  Plug 'echasnovski/mini.icons'
 call plug#end()
 
 let mapleader = ' '
