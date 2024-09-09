@@ -31,11 +31,15 @@ call plug#begin()
   Plug 'kevinhwang91/promise-async'
   Plug 'kevinhwang91/nvim-ufo'
   Plug 'tzachar/cmp-tabnine', { 'do': './install.sh' }
+  Plug 'folke/trouble.nvim'
+  Plug 'nvim-pack/nvim-spectre'
 call plug#end()
 
+let mapleader = ' '
+let maplocalleader = ' '
 colorscheme catppuccin-mocha " catppuccin-latte, catppuccin-frappe, catppuccin-macchiato, catppuccin-mocha
-nnoremap <Space>n :bn<CR>
-nnoremap <Space>p :bp<CR>
+nnoremap <leader>bn :bn<CR>
+nnoremap <leader>bp :bp<CR>
 
 lua << EOF
 require('config')

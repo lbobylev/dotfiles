@@ -12,6 +12,17 @@ require("catppuccin").setup({
     }
 })
 
+require('spectre').setup({})
+vim.keymap.set('n', '<leader>S', '<cmd>lua require("spectre").toggle()<CR>', { desc = "Toggle Spectre" })
+vim.keymap.set('n', '<leader>sw', '<cmd>lua require("spectre").open_visual({select_word=true})<CR>',
+    { desc = "Search current word" })
+vim.keymap.set('v', '<leader>sw', '<esc><cmd>lua require("spectre").open_visual()<CR>', { desc = "Search current word" })
+vim.keymap.set('n', '<leader>sp', '<cmd>lua require("spectre").open_file_search({select_word=true})<CR>',
+    { desc = "Search on current file" })
+
+require('trouble').setup({})
+vim.api.nvim_set_keymap('n', '<leader>xx', '<cmd>Trouble<CR>', { noremap = true, silent = true })
+
 require('cmp_tabnine.config'):setup({
     max_lines = 1000,
     max_num_results = 20,
@@ -94,14 +105,14 @@ local get_opts = function()
 end
 
 local builtin = require('telescope.builtin')
-vim.keymap.set('n', '<space>ff', function()
+vim.keymap.set('n', '<leader>ff', function()
     builtin.find_files(get_opts())
 end, {})
-vim.keymap.set('n', '<space>fg', function()
+vim.keymap.set('n', '<leader>fg', function()
     builtin.live_grep(get_opts())
 end, {})
-vim.keymap.set('n', '<space>fb', builtin.buffers, {})
-vim.keymap.set('n', '<space>fh', builtin.help_tags, {})
+vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
+vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
 
 require('telescope').load_extension('fzf')
 
@@ -121,7 +132,7 @@ local tree_on_attach = function(bufnr)
     local api = require "nvim-tree.api"
     -- default mappings
     api.config.mappings.default_on_attach(bufnr)
-    vim.keymap.set('n', '<space>th', api.tree.toggle_help)
+    vim.keymap.set('n', '<leader>th', api.tree.toggle_help)
 end
 
 require("nvim-tree").setup({
@@ -140,7 +151,7 @@ require("nvim-tree").setup({
     on_attach = tree_on_attach
 })
 
-vim.keymap.set('n', "<space>tt", "<cmd>NvimTreeToggle<cr>")
+vim.keymap.set('n', "<leader>tt", "<cmd>NvimTreeToggle<cr>")
 
 require("mason").setup()
 require("mason-lspconfig").setup({
@@ -299,25 +310,25 @@ require('gitsigns').setup {
         end)
 
         -- Actions
-        map('n', '<space>hs', gitsigns.stage_hunk)
-        map('n', '<space>hr', gitsigns.reset_hunk)
-        map('v', '<space>hs', function() gitsigns.stage_hunk { vim.fn.line('.'), vim.fn.line('v') } end)
-        map('v', '<space>hr', function() gitsigns.reset_hunk { vim.fn.line('.'), vim.fn.line('v') } end)
-        map('n', '<space>hS', gitsigns.stage_buffer)
-        map('n', '<space>hu', gitsigns.undo_stage_hunk)
-        map('n', '<space>hR', gitsigns.reset_buffer)
-        map('n', '<space>hp', gitsigns.preview_hunk)
-        map('n', '<space>hb', function() gitsigns.blame_line { full = true } end)
-        map('n', '<space>tb', gitsigns.toggle_current_line_blame)
-        map('n', '<space>hd', gitsigns.diffthis)
-        map('n', '<space>hD', function() gitsigns.diffthis('~') end)
-        map('n', '<space>td', gitsigns.toggle_deleted)
+        map('n', '<leader>hs', gitsigns.stage_hunk)
+        map('n', '<leader>hr', gitsigns.reset_hunk)
+        map('v', '<leader>hs', function() gitsigns.stage_hunk { vim.fn.line('.'), vim.fn.line('v') } end)
+        map('v', '<leader>hr', function() gitsigns.reset_hunk { vim.fn.line('.'), vim.fn.line('v') } end)
+        map('n', '<leader>hS', gitsigns.stage_buffer)
+        map('n', '<leader>hu', gitsigns.undo_stage_hunk)
+        map('n', '<leader>hR', gitsigns.reset_buffer)
+        map('n', '<leader>hp', gitsigns.preview_hunk)
+        map('n', '<leader>hb', function() gitsigns.blame_line { full = true } end)
+        map('n', '<leader>tb', gitsigns.toggle_current_line_blame)
+        map('n', '<leader>hd', gitsigns.diffthis)
+        map('n', '<leader>hD', function() gitsigns.diffthis('~') end)
+        map('n', '<leader>td', gitsigns.toggle_deleted)
 
         -- Text object
         map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
     end
 }
 
-vim.keymap.set('n', '<space>du', require 'dapui'.toggle)
+vim.keymap.set('n', '<leader>du', require 'dapui'.toggle)
 
 require 'jdtl_config'

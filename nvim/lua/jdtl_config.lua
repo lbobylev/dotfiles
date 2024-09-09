@@ -28,9 +28,9 @@ local on_attach = function(client, bufnr)
 
     -- Java extensions provided by jdtls
     nnoremap("<C-o>", jdtls.organize_imports, opts, "Organize imports")
-    nnoremap("<space>ev", jdtls.extract_variable, opts, "Extract variable")
-    nnoremap("<space>ec", jdtls.extract_constant, opts, "Extract constant")
-    vim.keymap.set('v', "<space>em", [[<ESC><CMD>lua require('jdtls').extract_method(true)<CR>]],
+    nnoremap("<leader>ev", jdtls.extract_variable, opts, "Extract variable")
+    nnoremap("<leader>ec", jdtls.extract_constant, opts, "Extract constant")
+    vim.keymap.set('v', "<leader>em", [[<ESC><CMD>lua require('jdtls').extract_method(true)<CR>]],
         { noremap = true, silent = true, buffer = bufnr, desc = "Extract method" })
 
     -- With `hotcodereplace = 'auto' the debug adapter will try to apply code changes
@@ -40,32 +40,32 @@ local on_attach = function(client, bufnr)
     require('dap.ext.vscode').load_launchjs()
 
     -- nvim-dap
-    nnoremap("<space>bb", "<cmd>lua require'dap'.toggle_breakpoint()<cr>", opts, "Set breakpoint")
-    nnoremap("<space>bc", "<cmd>lua require'dap'.set_breakpoint(vim.fn.input('Breakpoint condition: '))<cr>", opts,
+    nnoremap("<leader>bb", "<cmd>lua require'dap'.toggle_breakpoint()<cr>", opts, "Set breakpoint")
+    nnoremap("<leader>bc", "<cmd>lua require'dap'.set_breakpoint(vim.fn.input('Breakpoint condition: '))<cr>", opts,
         "Set conditional breakpoint")
-    nnoremap("<space>bl", "<cmd>lua require'dap'.set_breakpoint(nil, nil, vim.fn.input('Log point message: '))<cr>", opts,
+    nnoremap("<leader>bl", "<cmd>lua require'dap'.set_breakpoint(nil, nil, vim.fn.input('Log point message: '))<cr>", opts,
         "Set log point")
-    nnoremap('<space>br', "<cmd>lua require'dap'.clear_breakpoints()<cr>", opts, "Clear breakpoints")
-    nnoremap('<space>ba', '<cmd>Telescope dap list_breakpoints<cr>', opts, "List breakpoints")
+    nnoremap('<leader>br', "<cmd>lua require'dap'.clear_breakpoints()<cr>", opts, "Clear breakpoints")
+    nnoremap('<leader>ba', '<cmd>Telescope dap list_breakpoints<cr>', opts, "List breakpoints")
 
     nnoremap("<F5>", "<cmd>lua require'dap'.continue()<cr>", opts, "Continue")
     nnoremap("<F8>", "<cmd>lua require'dap'.step_over()<cr>", opts, "Step over")
     nnoremap("<F7>", "<cmd>lua require'dap'.step_into()<cr>", opts, "Step into")
-    nnoremap("<space>do", "<cmd>lua require'dap'.step_out()<cr>", opts, "Step out")
-    nnoremap('<space>dd', "<cmd>lua require'dap'.disconnect()<cr>", opts, "Disconnect")
-    nnoremap('<space>dt', "<cmd>lua require'dap'.terminate()<cr>", opts, "Terminate")
-    nnoremap("<space>dr", "<cmd>lua require'dap'.repl.toggle()<cr>", opts, "Open REPL")
-    nnoremap("<space>dl", "<cmd>lua require'dap'.run_last()<cr>", opts, "Run last")
-    nnoremap('<space>di', function() require "dap.ui.widgets".hover() end, opts, "Variables")
-    nnoremap('<space>ds', function()
+    nnoremap("<leader>do", "<cmd>lua require'dap'.step_out()<cr>", opts, "Step out")
+    nnoremap('<leader>dd', "<cmd>lua require'dap'.disconnect()<cr>", opts, "Disconnect")
+    nnoremap('<leader>dt', "<cmd>lua require'dap'.terminate()<cr>", opts, "Terminate")
+    nnoremap("<leader>dr", "<cmd>lua require'dap'.repl.toggle()<cr>", opts, "Open REPL")
+    nnoremap("<leader>dl", "<cmd>lua require'dap'.run_last()<cr>", opts, "Run last")
+    nnoremap('<leader>di', function() require "dap.ui.widgets".hover() end, opts, "Variables")
+    nnoremap('<leader>ds', function()
         local widgets = require "dap.ui.widgets"; widgets.centered_float(widgets.scopes)
     end, opts, "Scopes")
-    nnoremap('<space>df', '<cmd>Telescope dap frames<cr>', opts, "List frames")
-    nnoremap('<space>dh', '<cmd>Telescope dap commands<cr>', opts, "List commands")
-    --nnoremap('<space>du', "<cmd>lua require'dapui'.toggle()<cr>", opts)
+    nnoremap('<leader>df', '<cmd>Telescope dap frames<cr>', opts, "List frames")
+    nnoremap('<leader>dh', '<cmd>Telescope dap commands<cr>', opts, "List commands")
+    --nnoremap('<leader>du', "<cmd>lua require'dapui'.toggle()<cr>", opts)
 
-    nnoremap("<space>tc", jdtls.test_class, opts, "Test class (DAP)")
-    nnoremap("<space>m", jdtls.test_nearest_method, opts, "Test method (DAP)")
+    nnoremap("<leader>tc", jdtls.test_class, opts, "Test class (DAP)")
+    nnoremap("<leader>m", jdtls.test_nearest_method, opts, "Test method (DAP)")
 
     local dap, dapui = require("dap"), require("dapui")
     dapui.setup()
