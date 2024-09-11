@@ -32,9 +32,11 @@ call plug#begin()
   Plug 'kevinhwang91/nvim-ufo'
   Plug 'tzachar/cmp-tabnine', { 'do': './install.sh' }
   Plug 'folke/trouble.nvim'
+  Plug 'folke/which-key.nvim'
   Plug 'nvim-pack/nvim-spectre'
   Plug 'goolord/alpha-nvim'
   Plug 'echasnovski/mini.icons'
+  Plug 'onsails/lspkind.nvim'
 call plug#end()
 
 let mapleader = ' '

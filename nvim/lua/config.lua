@@ -26,7 +26,7 @@ vim.keymap.set('n', '<leader>sp', '<cmd>lua require("spectre").open_file_search(
     { desc = "Search on current file" })
 
 require('trouble').setup({})
-vim.api.nvim_set_keymap('n', '<leader>xx', '<cmd>Trouble<CR>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>xx', '<cmd>Trouble<CR>', { noremap = true, silent = true, desc = 'Trouble' })
 
 require('cmp_tabnine.config'):setup({
     max_lines = 1000,
@@ -42,6 +42,7 @@ require('cmp_tabnine.config'):setup({
     show_prediction_strength = false,
     min_percent = 0
 })
+-- ??? doesn't work with lspkind
 vim.api.nvim_set_hl(0, "CmpItemKindTabNine", { fg = "#6CC644" })
 local prefetch = vim.api.nvim_create_augroup("prefetch", { clear = true })
 vim.api.nvim_create_autocmd('BufRead', {
@@ -110,14 +111,16 @@ local get_opts = function()
 end
 
 local builtin = require('telescope.builtin')
-vim.keymap.set('n', '<leader>ff', function()
+FindFiles = function()
     builtin.find_files(get_opts())
-end, {})
-vim.keymap.set('n', '<leader>fg', function()
+end
+LiveGrep = function()
     builtin.live_grep(get_opts())
-end, {})
-vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
-vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
+end
+vim.keymap.set('n', '<leader>ff', "<cmd>lua FindFiles()<CR>", { desc = 'Find files' })
+vim.keymap.set('n', '<leader>fg', "<cmd>lua LiveGrep()<CR>", { desc = 'Live grep' })
+vim.keymap.set('n', '<leader>fb', "<cmd>lua require('telescope.builtin').buffers()<CR>", { desc = 'List buffers' })
+vim.keymap.set('n', '<leader>fh', "<cmd>lua require('telescope.builtin').builtin.help_tags()<CR", { desc = 'Help tags' })
 
 require('telescope').load_extension('fzf')
 
@@ -137,7 +140,7 @@ local tree_on_attach = function(bufnr)
     local api = require "nvim-tree.api"
     -- default mappings
     api.config.mappings.default_on_attach(bufnr)
-    vim.keymap.set('n', '<leader>th', api.tree.toggle_help)
+    vim.keymap.set('n', '<leader>th', api.tree.toggle_help, { desc = 'Toggle NvimTree help' })
 end
 
 require("nvim-tree").setup({
@@ -156,7 +159,7 @@ require("nvim-tree").setup({
     on_attach = tree_on_attach
 })
 
-vim.keymap.set('n', "<leader>tt", "<cmd>NvimTreeToggle<cr>")
+vim.keymap.set('n', "<leader>tt", "<cmd>NvimTreeToggle<cr>", { desc = 'Toggle NvimTree' })
 
 require("mason").setup()
 require("mason-lspconfig").setup({
@@ -234,6 +237,7 @@ require('mason-lspconfig').setup_handlers({
     end
 })
 
+local lspkind = require('lspkind')
 local compare = require('cmp.config.compare')
 local cmp = require('cmp')
 cmp.setup {
@@ -285,6 +289,26 @@ cmp.setup {
             end
         end, { 'i', 's' }),
     }),
+    formatting = {
+        format = lspkind.cmp_format({
+            -- mode = 'symbol', -- show only symbol annotations
+            maxwidth = 50, -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+            -- can also be a function to dynamically calculate max width such as
+            -- maxwidth = function() return math.floor(0.45 * vim.o.columns) end,
+            -- ellipsis_char = '...', -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
+            -- show_labelDetails = true, -- show labelDetails in menu. Disabled by default
+
+            -- The function below will be called before any actual modifications from lspkind
+            -- so that you can provide more controls on popup customization. (See [#30](https://github.com/onsails/lspkind-nvim/pull/30))
+            before = function(entry, vim_item)
+                if entry.source.name == "cmp_tabnine" then
+                    vim_item.kind = '🚀'
+                    vim_item.menu = 'Tabnine'
+                end
+                return vim_item
+            end
+        })
+    }
 }
 
 require('gitsigns').setup {
@@ -314,26 +338,29 @@ require('gitsigns').setup {
             end
         end)
 
-        -- Actions
-        map('n', '<leader>hs', gitsigns.stage_hunk)
-        map('n', '<leader>hr', gitsigns.reset_hunk)
-        map('v', '<leader>hs', function() gitsigns.stage_hunk { vim.fn.line('.'), vim.fn.line('v') } end)
-        map('v', '<leader>hr', function() gitsigns.reset_hunk { vim.fn.line('.'), vim.fn.line('v') } end)
-        map('n', '<leader>hS', gitsigns.stage_buffer)
-        map('n', '<leader>hu', gitsigns.undo_stage_hunk)
-        map('n', '<leader>hR', gitsigns.reset_buffer)
-        map('n', '<leader>hp', gitsigns.preview_hunk)
-        map('n', '<leader>hb', function() gitsigns.blame_line { full = true } end)
-        map('n', '<leader>tb', gitsigns.toggle_current_line_blame)
-        map('n', '<leader>hd', gitsigns.diffthis)
-        map('n', '<leader>hD', function() gitsigns.diffthis('~') end)
-        map('n', '<leader>td', gitsigns.toggle_deleted)
-
-        -- Text object
-        map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>')
+        map('n', '<leader>hs', gitsigns.stage_hunk, { desc = 'Stage current hunk' })
+        map('n', '<leader>hr', gitsigns.reset_hunk, { desc = 'Reset current hunk' })
+        map('v', '<leader>hs', function()
+            gitsigns.stage_hunk { vim.fn.line('.'), vim.fn.line('v') }
+        end, { desc = 'Stage selected hunk' })
+        map('v', '<leader>hr', function()
+            gitsigns.reset_hunk { vim.fn.line('.'), vim.fn.line('v') }
+        end, { desc = 'Reset selected hunk' })
+        map('n', '<leader>hS', gitsigns.stage_buffer, { desc = 'Stage entire buffer' })
+        map('n', '<leader>hu', gitsigns.undo_stage_hunk, { desc = 'Undo stage hunk' })
+        map('n', '<leader>hR', gitsigns.reset_buffer, { desc = 'Reset entire buffer' })
+        map('n', '<leader>hp', gitsigns.preview_hunk, { desc = 'Preview hunk' })
+        map('n', '<leader>hb', function()
+            gitsigns.blame_line { full = true }
+        end, { desc = 'Blame current line (full)' })
+        map('n', '<leader>tb', gitsigns.toggle_current_line_blame, { desc = 'Toggle current line blame' })
+        map('n', '<leader>hd', gitsigns.diffthis, { desc = 'Diff current buffer' })
+        map('n', '<leader>hD', function() gitsigns.diffthis('~') end, { desc = 'Diff against last commit' })
+        map('n', '<leader>td', gitsigns.toggle_deleted, { desc = 'Toggle deleted lines' })
+        map({ 'o', 'x' }, 'ih', ':<C-U>Gitsigns select_hunk<CR>', { desc = 'Select hunk' })
     end
 }
 
-vim.keymap.set('n', '<leader>du', require 'dapui'.toggle)
+vim.keymap.set('n', '<leader>du', require 'dapui'.toggle, { desc = 'Toggle DAP UI' })
 
 require 'jdtl_config'
