@@ -12,6 +12,37 @@ require("catppuccin").setup({
     }
 })
 
+require("noice").setup({
+    lsp = {
+        -- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+        override = {
+            ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+            ["vim.lsp.util.stylize_markdown"] = true,
+            ["cmp.entry.get_documentation"] = true, -- requires hrsh7th/nvim-cmp
+        },
+    },
+    cmdline = {
+        opts = {
+            position = {
+                row = '50%', -- vertical position
+                col = '50%', -- horizontal position
+            },
+            size = {
+                -- width = 30, -- width of the command line UI
+                height = 'auto', -- single line height
+            },
+        },
+    },
+    -- you can enable a preset for easier configuration
+    presets = {
+        -- bottom_search = true,         -- use a classic bottom cmdline for search
+        command_palette = true,       -- position the cmdline and popupmenu together
+        long_message_to_split = true, -- long messages will be sent to a split
+        inc_rename = false,           -- enables an input dialog for inc-rename.nvim
+        lsp_doc_border = false,       -- add a border to hover docs and signature help
+    },
+})
+
 require("outline").setup({})
 
 local alpha = require('alpha')
@@ -73,7 +104,8 @@ require('Comment').setup()
 
 require("bufferline").setup {}
 
-require('telescope').setup({
+local telescope = require('telescope')
+telescope.setup({
     defaults = {
         path_display = {
             shorten = {
@@ -95,6 +127,7 @@ require('telescope').setup({
         }
     }
 })
+telescope.load_extension("noice")
 
 local get_opts = function()
     local src_dir = '/Users/leonid/src'
@@ -245,6 +278,43 @@ require("copilot").setup({
 })
 require 'copilot_cmp'.setup()
 vim.api.nvim_set_hl(0, "CmpItemKindCopilot", { fg = "#6CC644" })
+require("CopilotChat").setup {
+    debug = true, -- Enable debugging
+    show_help = 'yes',
+    prompts = {
+        -- Code related prompts
+        Explain = "Please explain how the following code works.",
+        Review = "Please review the following code and provide suggestions for improvement.",
+        Tests = "Please explain how the selected code works, then generate unit tests for it.",
+        Refactor = "Please refactor the following code to improve its clarity and readability.",
+        Fixcode = "Please fix the following code to make it work as intended.",
+        BetterNamings = "Please provide better names for the following variables and functions.",
+        Documentation = "Please provide documentation for the following code.",
+        -- Text related prompts
+        Summarize = "Please summarize the following text.",
+        Spelling = "Please correct any grammar and spelling errors in the following text.",
+        Wording = "Please improve the grammar and wording of the following text.",
+        Concise = "Please rewrite the following text to make it more concise.",
+    },
+    mappings = {
+        complete = {
+            insert = '',
+        },
+    },
+    window = {
+        layout = 'float',
+        relative = 'cursor',
+        width = 1,
+        height = .4,
+        row = 1
+    }
+}
+require("CopilotChat.integrations.cmp").setup()
+vim.keymap.set('n', '<leader>ccf', ':CopilotChatFix<CR>', { desc = 'Copilot Chat - Fix code' })
+vim.keymap.set('n', '<leader>cce', ':CopilotChatExplain<CR>', { desc = 'Copilot Chat - Explain code' })
+vim.keymap.set('n', '<leader>cct', ':CopilotChatTests<CR>', { desc = 'Copilot Chat - Generate tests' })
+vim.keymap.set('n', '<leader>ccr', ':CopilotChatReview<CR>', { desc = 'Copilot Chat - Review code' })
+vim.keymap.set('n', '<leader>ccR', ':CopilotChatRefactor<CR>', { desc = 'Copilot Chat - Refactor code' })
 
 local lspkind = require('lspkind')
 local compare = require('cmp.config.compare')

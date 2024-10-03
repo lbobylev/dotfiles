@@ -19,4 +19,5 @@ return {
     -- Option + Right Arrow (перемещение на одно слово вправо)
     {key="RightArrow", mods="ALT", action=wezterm.action{SendString="\x1bf"}},
   },
+  window_close_confirmation = 'NeverPrompt',
 }

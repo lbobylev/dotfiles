@@ -33,8 +33,12 @@ call plug#begin()
   "Plug 'tzachar/cmp-tabnine', { 'do': './install.sh' }
   Plug 'zbirenbaum/copilot.lua'
   Plug 'zbirenbaum/copilot-cmp'
+  Plug 'CopilotC-Nvim/CopilotChat.nvim', { 'branch': 'canary' }
   Plug 'folke/trouble.nvim'
   Plug 'folke/which-key.nvim'
+  Plug 'folke/noice.nvim' 
+  Plug 'MunifTanjim/nui.nvim' "dependency for folks/noice.nvim
+  Plug 'rcarriga/nvim-notify', "optional dependency for folks/noice.nvim
   Plug 'nvim-pack/nvim-spectre'
   Plug 'goolord/alpha-nvim'
   Plug 'echasnovski/mini.icons'
