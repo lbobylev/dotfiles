@@ -12,6 +12,8 @@ require("catppuccin").setup({
     }
 })
 
+require("outline").setup({})
+
 local alpha = require('alpha')
 local dashboard = require('alpha.themes.dashboard')
 
@@ -28,30 +30,30 @@ vim.keymap.set('n', '<leader>sp', '<cmd>lua require("spectre").open_file_search(
 require('trouble').setup({})
 vim.api.nvim_set_keymap('n', '<leader>xx', '<cmd>Trouble<CR>', { noremap = true, silent = true, desc = 'Trouble' })
 
-require('cmp_tabnine.config'):setup({
-    max_lines = 1000,
-    max_num_results = 20,
-    sort = true,
-    run_on_every_keystroke = true,
-    snippet_placeholder = '..',
-    ignored_file_types = {
-        -- default is not to ignore
-        -- uncomment to ignore in lua:
-        -- lua = true
-    },
-    show_prediction_strength = false,
-    min_percent = 0
-})
--- ??? doesn't work with lspkind
-vim.api.nvim_set_hl(0, "CmpItemKindTabNine", { fg = "#6CC644" })
-local prefetch = vim.api.nvim_create_augroup("prefetch", { clear = true })
-vim.api.nvim_create_autocmd('BufRead', {
-    group = prefetch,
-    pattern = { '*.py', '*.lua', '*.java', '*.ts', '*.tsx', '*.js', '*.jsx' },
-    callback = function()
-        require('cmp_tabnine'):prefetch(vim.fn.expand('%:p'))
-    end
-})
+-- require('cmp_tabnine.config'):setup({
+--     max_lines = 1000,
+--     max_num_results = 20,
+--     sort = true,
+--     run_on_every_keystroke = true,
+--     snippet_placeholder = '..',
+--     ignored_file_types = {
+--         -- default is not to ignore
+--         -- uncomment to ignore in lua:
+--         -- lua = true
+--     },
+--     show_prediction_strength = false,
+--     min_percent = 0
+-- })
+-- -- ??? doesn't work with lspkind
+-- vim.api.nvim_set_hl(0, "CmpItemKindTabNine", { fg = "#6CC644" })
+-- local prefetch = vim.api.nvim_create_augroup("prefetch", { clear = true })
+-- vim.api.nvim_create_autocmd('BufRead', {
+--     group = prefetch,
+--     pattern = { '*.py', '*.lua', '*.java', '*.ts', '*.tsx', '*.js', '*.jsx' },
+--     callback = function()
+--         require('cmp_tabnine'):prefetch(vim.fn.expand('%:p'))
+--     end
+-- })
 
 vim.o.foldcolumn = '1' -- Указывает, сколько колонок отводить под индикаторы сворачивания
 vim.o.foldlevel = 99   -- Уровень сворачивания (99 означает, что код изначально не свернут)
@@ -237,12 +239,25 @@ require('mason-lspconfig').setup_handlers({
     end
 })
 
+require("copilot").setup({
+    suggestion = { enabled = false },
+    panel = { enabled = false },
+})
+require 'copilot_cmp'.setup()
+vim.api.nvim_set_hl(0, "CmpItemKindCopilot", { fg = "#6CC644" })
+
 local lspkind = require('lspkind')
 local compare = require('cmp.config.compare')
 local cmp = require('cmp')
+local has_words_before = function()
+    if vim.api.nvim_buf_get_option(0, "buftype") == "prompt" then return false end
+    local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+    return col ~= 0 and vim.api.nvim_buf_get_text(0, line - 1, 0, line - 1, col, {})[1]:match("^%s*$") == nil
+end
 cmp.setup {
     sources = {
-        { name = 'cmp_tabnine' },
+        -- { name = 'cmp_tabnine' },
+        { name = "copilot",                group_index = 2 },
         { name = 'nvim_lsp' },
         { name = 'nvim_lsp_signature_help' },
         { name = 'vsnip' },
@@ -250,7 +265,8 @@ cmp.setup {
     sorting = {
         priority_weight = 2,
         comparators = {
-            require('cmp_tabnine.compare'),
+            -- require('cmp_tabnine.compare'),
+            require("copilot_cmp.comparators").prioritize,
             compare.offset,
             compare.exact,
             compare.score,
@@ -274,13 +290,21 @@ cmp.setup {
             behavior = cmp.ConfirmBehavior.Replace,
             select = true,
         },
-        ['<Tab>'] = cmp.mapping(function(fallback)
-            if cmp.visible() then
-                cmp.select_next_item()
+        -- https://github.com/zbirenbaum/copilot-cmp?tab=readme-ov-file#tab-completion-configuration-highly-recommended
+        ["<Tab>"] = vim.schedule_wrap(function(fallback)
+            if cmp.visible() and has_words_before() then
+                cmp.select_next_item({ behavior = cmp.SelectBehavior.Select })
             else
                 fallback()
             end
-        end, { 'i', 's' }),
+        end),
+        -- ['<Tab>'] = cmp.mapping(function(fallback)
+        --     if cmp.visible() then
+        --         cmp.select_next_item()
+        --     else
+        --         fallback()
+        --     end
+        -- end, { 'i', 's' }),
         ['<S-Tab>'] = cmp.mapping(function(fallback)
             if cmp.visible() then
                 cmp.select_prev_item()
@@ -291,8 +315,9 @@ cmp.setup {
     }),
     formatting = {
         format = lspkind.cmp_format({
-            -- mode = 'symbol', -- show only symbol annotations
-            maxwidth = 50, -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+            mode = 'symbol', -- show only symbol annotations
+            symbol_map = { Copilot = '' },
+            maxwidth = 50,   -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
             -- can also be a function to dynamically calculate max width such as
             -- maxwidth = function() return math.floor(0.45 * vim.o.columns) end,
             -- ellipsis_char = '...', -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
