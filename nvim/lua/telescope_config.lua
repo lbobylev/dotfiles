@@ -1,0 +1,49 @@
+local telescope = require 'telescope'
+
+telescope.setup {
+    defaults = {
+        path_display = {
+            shorten = {
+                len = 3, exclude = { 1, -1 }
+            },
+            truncate = true
+        },
+        dynamic_preview_title = true,
+    },
+    pickers = {
+        find_files = { no_ignore = false, hidden = false }
+    },
+    extensions = {
+        fzf = {
+            fuzzy = true,                   -- false will only do exact matching
+            override_generic_sorter = true, -- override the generic sorter
+            override_file_sorter = true,    -- override the file sorter
+            case_mode = 'smart_case',       -- or 'ignore_case' or 'respect_case'
+        }
+    }
+}
+
+local get_opts = function()
+    local src_dir = '/Users/leonid/src'
+    local cwd = vim.fn.getcwd()
+    if string.match(cwd, '^' .. src_dir .. '/ewc%-app%-.+$') then
+        return {
+            search_dirs = {
+                cwd,
+                src_dir .. '/surge-app-core',
+                src_dir .. '/front-app-core',
+                src_dir .. '/front-app-ewc'
+            }
+        }
+    end
+    return {}
+end
+
+local builtin = require 'telescope.builtin'
+vim.keymap.set('n', '<leader>ff', function() builtin.find_files(get_opts()) end, { desc = 'Find files' })
+vim.keymap.set('n', '<leader>fg', function() builtin.live_grep(get_opts()) end, { desc = 'Live grep' })
+vim.keymap.set('n', '<leader>fb', '<cmd>lua require("telescope.builtin").buffers()<CR>', { desc = 'List buffers' })
+vim.keymap.set('n', '<leader>fh', '<cmd>lua require("telescope.builtin").builtin.help_tags()<CR', { desc = 'Help tags' })
+
+telescope.load_extension 'fzf'
+-- telescope.load_extension 'noice'
