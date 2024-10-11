@@ -17,6 +17,8 @@ require 'packer'.startup(function(use)
     use 'mfussenegger/nvim-jdtls'
     use 'nvim-neotest/nvim-nio'
     use 'rcarriga/nvim-dap-ui'
+    use 'rcarriga/nvim-notify' -- optional dependency for folke/noice.nvim
+    use 'j-hui/fidget.nvim'
     use 'nvim-lua/plenary.nvim'
     use 'hrsh7th/nvim-cmp'
     use 'hrsh7th/cmp-nvim-lsp'
@@ -44,9 +46,12 @@ require 'packer'.startup(function(use)
     use { 'CopilotC-Nvim/CopilotChat.nvim', branch = 'canary' }
     use 'folke/trouble.nvim'
     use 'folke/which-key.nvim'
-    -- use 'folke/noice.nvim'
-    -- use 'MunifTanjim/nui.nvim' -- dependency for folke/noice.nvim
-    -- use 'rcarriga/nvim-notify' -- optional dependency for folke/noice.nvim
+    use {
+        'VonHeikemen/fine-cmdline.nvim',
+        requires = {
+            { 'MunifTanjim/nui.nvim' }
+        }
+    }
     use 'nvim-pack/nvim-spectre'
     use 'goolord/alpha-nvim'
     use 'echasnovski/mini.icons'
@@ -116,3 +121,46 @@ require('bufferline').setup {}
 require 'lualine'.setup { options = { theme = 'catppuccin' } }
 
 vim.keymap.set('n', '<leader>du', require 'dapui'.toggle, { desc = 'Toggle DAP UI' })
+vim.api.nvim_set_keymap('n', ':', '<cmd>FineCmdline<CR>', { noremap = true })
+-- Key bindings for resizing windows
+vim.api.nvim_set_keymap('n', '<leader><Up>', ':resize +5<CR>',
+    { noremap = true, silent = true, desc = 'Increase window height' })
+vim.api.nvim_set_keymap('n', '<leader><Down>', ':resize -5<CR>',
+    { noremap = true, silent = true, desc = 'Decrease window height' })
+vim.api.nvim_set_keymap('n', '<leader><Left>', ':vertical resize -5<CR>',
+    { noremap = true, silent = true, desc = 'Decrease window width' })
+vim.api.nvim_set_keymap('n', '<leader><Right>', ':vertical resize +5<CR>',
+    { noremap = true, silent = true, desc = 'Increase window width' })
+vim.keymap.set('n', '<leader>u', function()
+    local modules_to_reload = {
+        "copilot_config",
+        "jdtl_config",
+        "telescope_config",
+    }
+    for _, module in ipairs(modules_to_reload) do
+        package.loaded[module] = nil
+        return require(module)
+    end
+end, { noremap = true, silent = true, desc = 'Reload config' })
+
+require 'fidget'.setup {
+    progress = {
+        display = {
+            render_limit = 5
+        }
+    },
+    notification = {
+        window = {
+            -- max_width = 60
+        }
+    }
+}
+
+local notify = require 'notify'
+vim.notify = notify
+notify.setup {
+    max_width = 50,
+    max_height = 60,
+    render = 'wrapped-default'
+}
+
