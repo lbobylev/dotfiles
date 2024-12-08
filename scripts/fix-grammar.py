@@ -7,7 +7,7 @@ def fix_grammar(text):
     response = client.chat.completions.with_raw_response.create(
         model="gpt-4o-mini",
         messages=[
-            {"role": "system", "content": "Fix grammar and improve clarity and readability. Do not add any additional text, quotes, or other elements; just make the necessary corrections."},
+            {"role": "system", "content": "Fix grammar and improve clarity and readability. Make the phrase more natural for a native speaker. Do not add any additional text, quotes, or other elements; just make the necessary corrections."},
             {"role": "user", "content": f"{text}"}
         ]
     )
