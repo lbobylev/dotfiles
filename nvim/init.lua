@@ -27,6 +27,7 @@ require 'packer'.startup(function(use)
     use 'nvim-telescope/telescope.nvim'
     use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
     use { 'catppuccin/nvim', as = 'catppuccin' }
+    use "rebelot/kanagawa.nvim"
     use 'nvim-lualine/lualine.nvim'
     use 'nvim-tree/nvim-web-devicons'
     use 'nvim-tree/nvim-tree.lua'
@@ -58,17 +59,44 @@ require 'packer'.startup(function(use)
     use 'onsails/lspkind.nvim'
     use 'hedyhli/outline.nvim'
     use {
+        'nvim-treesitter/nvim-treesitter',
+        run = ':TSUpdate', -- Automatically install parsers
+    }
+    use {
+        'MeanderingProgrammer/render-markdown.nvim',
+        after = { 'nvim-treesitter' },
+        requires = { 'echasnovski/mini.nvim', opt = true }, -- if you use the mini.nvim suite
+        -- requires = { 'echasnovski/mini.icons', opt = true }, -- if you use standalone mini plugins
+        -- requires = { 'nvim-tree/nvim-web-devicons', opt = true }, -- if you prefer nvim-web-devicons
+        config = function()
+            require 'render-markdown'.setup {
+                file_types = { 'markdown', 'codecompanion' },
+            }
+        end,
+    }
+    use {
         'olimorris/codecompanion.nvim',
         requires = {
             "nvim-lua/plenary.nvim",
             "nvim-treesitter/nvim-treesitter",
-            "hrsh7th/nvim-cmp",                                                                    -- Optional: For using slash commands and variables in the chat buffer
+            "hrsh7th/nvim-cmp", -- Optional: For using slash commands and variables in the chat buffer
             -- "nvim-telescope/telescope.nvim",                                                       -- Optional: For using slash commands
-            { "MeanderingProgrammer/render-markdown.nvim", ft = { "markdown", "codecompanion" } }, -- Optional: For prettier markdown rendering
             -- "stevearc/dressing.nvim"                                                               -- Optional: Improves `vim.ui.select`
         }
     }
 end)
+
+require 'nvim-treesitter.configs'.setup {
+    ensure_installed = { "markdown", "markdown_inline", "latex", "yaml" }, -- List of parsers to install
+    highlight = {
+        enable = true,                                                     -- Enable highlighting
+        -- additional_vim_regex_highlighting = false,  -- Disable additional regex highlighting
+    },
+    indent = {
+        enable = true, -- Enable indentation
+    },
+}
+
 
 -- Set leader keys
 vim.g.mapleader = ' '
@@ -76,6 +104,9 @@ vim.g.maplocalleader = ' '
 
 -- Set colorscheme
 vim.cmd('colorscheme catppuccin-mocha')
+-- vim.cmd('colorscheme kanagawa')
+-- vim.cmd('set termguicolors')
+-- vim.cmd('colorscheme desert')
 
 require 'copilot_config'
 -- require 'noice_config'

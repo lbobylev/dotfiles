@@ -30,6 +30,15 @@ local get_opts = function()
         return {
             search_dirs = { cwd, src_dir .. '/surge-app-unified' }
         }
+    elseif string.match(cwd, '^' .. src_dir .. '/ewc%-web%-.+$') then
+        return {
+            search_dirs = {
+                cwd,
+                src_dir .. '/front-pkg-core',
+                src_dir .. '/front-pkg-catalog',
+                src_dir .. '/front-pkg-dam'
+            }
+        }
     end
     return {}
 end
