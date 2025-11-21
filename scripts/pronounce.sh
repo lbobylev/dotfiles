@@ -13,5 +13,5 @@
 # @raycast.authorURL https://raycast.com/leonid_bobylev79
 
 source "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh"
-conda activate scripts
+conda activate base
 python /Users/leonid/.config/scripts/pronounce.py

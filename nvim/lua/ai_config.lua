@@ -36,65 +36,68 @@ require 'codecompanion'.setup {
         inline = { adapter = 'openai' }
     },
     adapters = {
-        ollama = function()
-            return adapters.extend('ollama', {
-                name = 'llama3',
-                schema = {
-                    model = {
-                        default = 'llama3.1:latest',
+        http = {
+            ollama = function()
+                return adapters.extend('ollama', {
+                    name = 'llama3',
+                    schema = {
+                        model = {
+                            default = 'llama3.1:latest',
+                        },
+                        num_ctx = {
+                            default = 16384,
+                        },
+                        num_predict = {
+                            default = -1,
+                        },
                     },
-                    num_ctx = {
-                        default = 16384,
+                })
+            end,
+            openai = function()
+                return adapters.extend('openai', {
+                    env = {
+                        api_key = openai_key
                     },
-                    num_predict = {
-                        default = -1,
+                    schema = {
+                        model = {
+                            default = 'gpt-5.1',
+                            temperature = 0,
+                        }
+                    }
+                })
+            end,
+            gemini = function()
+                return adapters.extend('gemini', {
+                    env = {
+                        api_key = gemini_key
                     },
-                },
-            })
-        end,
-        openai = function()
-            return adapters.extend('openai', {
-                env = {
-                    api_key = openai_key
-                },
-                schema = {
-                    model = {
-                        default = 'gpt-4o'
+                    schema = {
+                        model = {
+                            -- gemini-2.5-pro-exp-03-25
+                            -- gemini-2.0-flash
+                            -- gemini-2.0-pro-exp-02-05
+                            -- gemini-1.5-flash
+                            -- gemini-1.5-pro
+                            -- gemini-1.0-pro
+                            default = 'gemini-2.5-pro-preview-05-06'
+                        }
                     }
-                }
-            })
-        end,
-        gemini = function()
-            return adapters.extend('gemini', {
-                env = {
-                    api_key = gemini_key
-                },
-                schema = {
-                    model = {
-                        -- gemini-2.5-pro-exp-03-25
-                        -- gemini-2.0-flash
-                        -- gemini-2.0-pro-exp-02-05
-                        -- gemini-1.5-flash
-                        -- gemini-1.5-pro
-                        -- gemini-1.0-pro
-                        default = 'gemini-2.5-pro-preview-05-06'
+                })
+            end,
+            anthropic = function()
+                return adapters.extend("anthropic", {
+                    env = {
+                        api_key = anthropic_key
+                    },
+                    schema = {
+                        model = {
+                            default = "claude-3-5-sonnet-latest"
+                            -- default = "claude-3-5-haiku-latest"
+                        }
                     }
-                }
-            })
-        end,
-        anthropic = function()
-            return adapters.extend("anthropic", {
-                env = {
-                    api_key = anthropic_key
-                },
-                schema = {
-                    model = {
-                        default = "claude-3-5-sonnet-latest"
-                        -- default = "claude-3-5-haiku-latest"
-                    }
-                }
-            })
-        end,
+                })
+            end,
+        }
     },
     display = {
         chat = {

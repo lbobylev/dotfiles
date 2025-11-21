@@ -12,6 +12,7 @@ export BRAVESEARCH_API_KEY=$(cat ~/.bravesearch)
 export ANTHROPIC_API_KEY=$(cat ~/.anthropic)
 export CROWDIN_API_TOKEN=$(cat ~/.crowdin)
 export GEMINI_API_KEY=$(cat ~/.gemini)
+export MACHINE_SLACK_TOKEN=$(cat ~/.slack_machine)
 export LM_STUDIO_API_KEY=
 export LM_STUDIO_API_BASE=http://localhost:1234/v1/
 
@@ -34,10 +35,11 @@ PS1='$(kube_ps1)'$PS1
 function kx_fn() {
     local context=$1
     local subscription
-    if [ "$context" = "dev" ]; then
+    if [[ "$context" = "dev" || "$context" = "exp" ]]; then
         subscription="dev"
     else
-        vpnutil start "DedicatedVPN"
+        # vpnutil start "DedicatedVPN"
+        wgc up
         subscription="prod"
     fi
     az account set --subscription="$subscription"
@@ -98,3 +100,4 @@ unset __conda_setup
 
 # Amazon Q post block. Keep at the bottom of this file.
 [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
+export PATH="/opt/homebrew/opt/crowdin@4/bin:$PATH"

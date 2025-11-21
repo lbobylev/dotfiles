@@ -15,6 +15,6 @@
 export OPENAI_API_KEY=`cat /Users/leonid/.openai`
 
 source "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh"
-conda activate scripts
+conda activate base
 python /Users/leonid/.config/scripts/recognize-text.py
 /opt/homebrew/Cellar/terminal-notifier/2.0.0/bin/terminal-notifier -title "Text Recognized" -message "Text recognized" 

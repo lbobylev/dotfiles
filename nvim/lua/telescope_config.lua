@@ -49,6 +49,8 @@ vim.keymap.set('n', '<leader>fg', function() builtin.live_grep(get_opts()) end, 
 vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'List buffers' })
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Help tags' })
 vim.keymap.set('n', '<leader>fn', '<cmd>:Telescope notify<CR>', { desc = 'Notify history' })
+vim.keymap.set("n", "<leader>fr", builtin.resume, { desc = 'Telescope resume' })
+
 
 telescope.load_extension 'fzf'
 -- telescope.load_extension 'noice'
