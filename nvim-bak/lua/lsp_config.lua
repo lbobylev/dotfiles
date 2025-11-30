@@ -168,3 +168,17 @@ vim.lsp.config('ts_ls', {
     end,
     capabilities = default_capabilities
 })
+
+vim.lsp.config('lua_ls', {
+    on_attach = function(client, bufnr)
+        default_on_attach(client, bufnr)
+    end,
+    capabilities = default_capabilities,
+    settings = {
+        Lua = {
+            diagnostics = {
+                globals = { 'vim' },
+            },
+        },
+    },
+})

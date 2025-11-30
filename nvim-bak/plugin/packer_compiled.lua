@@ -129,6 +129,11 @@ _G.packer_plugins = {
     path = "/Users/leonid/.local/share/nvim/site/pack/packer/start/firenvim",
     url = "https://github.com/glacambre/firenvim"
   },
+  ["flash.nvim"] = {
+    loaded = true,
+    path = "/Users/leonid/.local/share/nvim/site/pack/packer/start/flash.nvim",
+    url = "https://github.com/folke/flash.nvim"
+  },
   ["git-conflict.nvim"] = {
     loaded = true,
     path = "/Users/leonid/.local/share/nvim/site/pack/packer/start/git-conflict.nvim",
