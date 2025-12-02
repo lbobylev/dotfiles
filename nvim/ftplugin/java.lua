@@ -3,9 +3,10 @@ local jdtls = require 'jdtls'
 local dap = require 'dap'
 local widgets = require 'dap.ui.widgets'
 
--- require 'dap_config'
-local nnoremap = require 'jdtls_util'.nnoremap
--- local wipe_data_and_restart = require 'jdtls_util'.wipe_data_and_restart
+local function map(rhs, lhs, bufopts, desc)
+    bufopts.desc = desc
+    vim.keymap.set("n", rhs, lhs, bufopts)
+end
 
 local root_markers = { 'settings.gradle', 'build.gradle', 'gradlew', 'mvnw', '.git' }
 local root_dir = require 'jdtls.setup'.find_root(root_markers)
@@ -19,43 +20,43 @@ local on_attach = function(client, bufnr)
     require 'lsp_mappings'.setup(bufnr)
 
     local opts = { noremap = true, silent = true, buffer = bufnr }
-    -- nnoremap("<C-o>", jdtls.organize_imports, opts, "Organize imports")
-    nnoremap("<leader>ev", jdtls.extract_variable, opts, "Extract variable")
-    nnoremap("<leader>ec", jdtls.extract_constant, opts, "Extract constant")
+    -- map("<C-o>", jdtls.organize_imports, opts, "Organize imports")
+    map("<leader>ev", jdtls.extract_variable, opts, "Extract variable")
+    map("<leader>ec", jdtls.extract_constant, opts, "Extract constant")
     vim.keymap.set('v', "<leader>em", [[<ESC><CMD>lua require('jdtls').extract_method(true)<CR>]],
         { noremap = true, silent = true, buffer = bufnr, desc = "Extract method" })
 
     -- nvim-dap
-    nnoremap("<leader>bb", dap.toggle_breakpoint, opts, "Set breakpoint")
-    nnoremap("<leader>bc", function() dap.set_breakpoint(vim.fn.input('Breakpoint condition: ')) end, opts,
+    map("<leader>bb", dap.toggle_breakpoint, opts, "Set breakpoint")
+    map("<leader>bc", function() dap.set_breakpoint(vim.fn.input('Breakpoint condition: ')) end, opts,
         "Set conditional breakpoint")
-    nnoremap("<leader>bl", function()
+    map("<leader>bl", function()
         dap.set_breakpoint(nil, nil, vim.fn.input('Log point message: '))
     end, opts, "Set log point")
-    nnoremap('<leader>br', dap.clear_breakpoints, opts, "Clear breakpoints")
-    nnoremap("<leader>dc", dap.continue, opts, "Continue")
-    nnoremap("<leader>dn", dap.step_over, opts, "Step over")
-    nnoremap("<leader>di", dap.step_into, opts, "Step into")
-    nnoremap("<leader>do", dap.step_out, opts, "Step out")
-    nnoremap('<leader>dd', dap.disconnect, opts, "Disconnect")
-    nnoremap('<leader>dt', dap.terminate, opts, "Terminate")
-    nnoremap("<leader>dr", dap.repl.toggle, opts, "Open repl")
-    nnoremap("<leader>dl", dap.run_last, opts, "Run last")
-    nnoremap('<leader>dv', widgets.hover, opts, "Variables")
-    nnoremap('<leader>ds', function() widgets.centered_float(widgets.scopes) end, opts, "Scopes")
+    map('<leader>br', dap.clear_breakpoints, opts, "Clear breakpoints")
+    map("<leader>dc", dap.continue, opts, "Continue")
+    map("<leader>dn", dap.step_over, opts, "Step over")
+    map("<leader>di", dap.step_into, opts, "Step into")
+    map("<leader>do", dap.step_out, opts, "Step out")
+    map('<leader>dd', dap.disconnect, opts, "Disconnect")
+    map('<leader>dt', dap.terminate, opts, "Terminate")
+    map("<leader>dr", dap.repl.toggle, opts, "Open repl")
+    map("<leader>dl", dap.run_last, opts, "Run last")
+    map('<leader>dv', widgets.hover, opts, "Variables")
+    map('<leader>ds', function() widgets.centered_float(widgets.scopes) end, opts, "Scopes")
 
-    -- nnoremap('<leader>df', '<cmd>Telescope dap frames<cr>', opts, "List frames")
-    -- nnoremap('<leader>dh', '<cmd>Telescope dap commands<cr>', opts, "List commands")
-    -- nnoremap('<leader>ba', '<cmd>Telescope dap list_breakpoints<cr>', opts, "List breakpoints")
-    -- nnoremap("<leader>z", wipe_data_and_restart, opts, "Wipe data and restart")
+    -- map('<leader>df', '<cmd>Telescope dap frames<cr>', opts, "List frames")
+    -- map('<leader>dh', '<cmd>Telescope dap commands<cr>', opts, "List commands")
+    -- map('<leader>ba', '<cmd>Telescope dap list_breakpoints<cr>', opts, "List breakpoints")
+    -- map("<leader>z", wipe_data_and_restart, opts, "Wipe data and restart")
 
     local java_test_config = {
         vmArgs = "--add-opens=java.base/java.io=ALL-UNNAMED"
     }
-    nnoremap("<leader>tc", function()
+    map("<leader>tc", function()
         jdtls.test_class({ config_overrides = java_test_config })
     end, opts, "Test class")
-    nnoremap("<leader>tm", function()
+    map("<leader>tm", function()
         jdtls.test_nearest_method({ config_overrides = java_test_config })
     end, opts, "Test method")
 end
@@ -68,9 +69,7 @@ local test_bundles = {
 }
 vim.list_extend(bundles, test_bundles)
 
-print(jdtls_dir)
-
-local config = {
+jdtls.start_or_attach {
     flags = {
         debounce_text_changes = 80,
     },
@@ -198,13 +197,3 @@ local config = {
         '-data', workspace_folder,
     },
 }
-
-
-jdtls.start_or_attach(config)
-
--- vim.api.nvim_create_autocmd("FileType", {
---     pattern = "java",
---     callback = function()
---         jdtls.start_or_attach(config)
---     end,
--- })
