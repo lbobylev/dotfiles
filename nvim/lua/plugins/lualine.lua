@@ -14,12 +14,18 @@ return {
                 'filetype',
                 {
                     function()
-                        local env = os.getenv("CONDA_DEFAULT_ENV")
-                        return env and "🐍 " .. env or ""
+                        local venv = os.getenv("VIRTUAL_ENV")
+                        local conda = os.getenv("CONDA_DEFAULT_ENV")
+
+                        if venv and venv ~= "" then
+                            return "🐍 venv:" .. vim.fn.fnamemodify(venv, ":t")
+                        elseif conda and conda ~= "" then
+                            return "🐍 conda:" .. conda
+                        end
+                        return ""
                     end,
                     cond = function()
-                        return os.getenv("CONDA_DEFAULT_ENV") ~= nil and
-                            vim.bo.filetype == 'python'
+                        return vim.bo.filetype == "python"
                     end
                 }
             },
@@ -27,5 +33,4 @@ return {
             lualine_z = { 'location' }
         },
     }
-
 }

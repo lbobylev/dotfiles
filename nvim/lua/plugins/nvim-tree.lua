@@ -18,13 +18,17 @@ return {
                 sorter = 'case_sensitive',
             },
             view = {
-                width = 30,
+                width = 50,
             },
             renderer = {
                 group_empty = true,
             },
             filters = {
-                dotfiles = false,
+                dotfiles = true,
+            },
+            update_focused_file = {
+                enable = true,
+                update_root = false,
             },
             on_attach = function(bufnr)
                 local api = require 'nvim-tree.api'
@@ -32,6 +36,7 @@ return {
                 map('n', '<leader>th', api.tree.toggle_help, { desc = 'Toggle NvimTree help' })
             end
         }
+
         map('n', '<leader>tt', '<cmd>NvimTreeToggle<cr>', { desc = 'Toggle NvimTree' })
     end,
 }

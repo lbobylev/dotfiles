@@ -4,7 +4,7 @@ vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
 vim.g.mapleader = ' '
-vim.g.maplocalleader = ' '
+vim.g.maplocalleader = ','
 vim.opt.termguicolors = true
 
 local map = vim.keymap.set
@@ -35,22 +35,6 @@ vim.opt.rtp:prepend(lazypath)
 
 require 'lazy'.setup {
     { import = 'plugins' },
-    {
-        "nvim-treesitter/nvim-treesitter",
-        build = ":TSUpdate",
-        config = function()
-            require 'nvim-treesitter.configs'.setup {
-                ensure_installed = { "markdown", "markdown_inline", "latex", "yaml" },
-                highlight = {
-                    enable = true,
-                    -- additional_vim_regex_highlighting = false,
-                },
-                indent = {
-                    enable = true,
-                },
-            }
-        end
-    },
     -- {
     --     "yorumicolors/yorumi.nvim",
     --     lazy = false,

@@ -36,35 +36,32 @@ return {
         -- vim.cmd("colorscheme monokai_ristretto")
 
         -- genral
-        vim.cmd([[
-                highlight Normal guibg=#000000
-                highlight NormalFloat guibg=#000000
-                highlight SignColumn guibg=#000000
-                highlight LineNr guibg=#000000
-                highlight CursorLine guibg=#000000
-            ]])
+        vim.api.nvim_set_hl(0, "Normal", { bg = "#000000" })
+        vim.api.nvim_set_hl(0, "NormalFloat", { bg = "#000000" })
+        vim.api.nvim_set_hl(0, "SignColumn", { bg = "#000000" })
+        vim.api.nvim_set_hl(0, "LineNr", { bg = "#000000" })
+        vim.api.nvim_set_hl(0, "CursorLine", { bg = "#000000" })
 
         -- lualine
-        vim.cmd([[
-                highlight StatusLine   guibg=#000000
-                highlight StatusLineNC   guibg=#000000
-            ]])
+        vim.api.nvim_set_hl(0, "StatusLine", { bg = "#000000" })
+        vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "#000000" })
 
-        vim.cmd([[
-                highlight TelescopeNormal        guibg=#000000
-                highlight TelescopeBorder        guibg=#000000
-                highlight TelescopePromptNormal  guibg=#000000
-                highlight TelescopePromptBorder  guibg=#000000
-                highlight TelescopeResultsNormal guibg=#000000
-                highlight TelescopeResultsBorder guibg=#000000
-                highlight TelescopePreviewNormal guibg=#000000
-                highlight TelescopePreviewBorder guibg=#000000
-                highlight TelescopeSelection     guibg=#000000
-            ]])
+        vim.api.nvim_set_hl(0, "TelescopeNormal", { bg = "#000000" })
+        vim.api.nvim_set_hl(0, "TelescopeBorder", { bg = "#000000" })
+        vim.api.nvim_set_hl(0, "TelescopePromptNormal", { bg = "#000000" })
+        vim.api.nvim_set_hl(0, "TelescopePromptBorder", { bg = "#000000" })
+        vim.api.nvim_set_hl(0, "TelescopeResultsNormal", { bg = "#000000" })
+        vim.api.nvim_set_hl(0, "TelescopeResultsBorder", { bg = "#000000" })
+        vim.api.nvim_set_hl(0, "TelescopePreviewNormal", { bg = "#000000" })
+        vim.api.nvim_set_hl(0, "TelescopePreviewBorder", { bg = "#000000" })
+        vim.api.nvim_set_hl(0, "TelescopeSelection", { bg = "#000000" })
 
-        vim.cmd([[
-                highlight Search guibg=#715c2f guifg=#ffffff gui=NONE
-                highlight IncSearch guibg=#8a6f35 guifg=#ffffff gui=NONE
-            ]])
+        vim.api.nvim_set_hl(0, "Search",
+            { bg = "#715c2f", fg = "#ffffff", bold = false, italic = false, underline = false })
+        vim.api.nvim_set_hl(0, "IncSearch",
+            { bg = "#8a6f35", fg = "#ffffff", bold = false, italic = false, underline = false })
+
+        -- vim.api.nvim_set_hl(0, "IndentBlanklineIndent1", { bg = "#121212", nocombine = true })
+        -- vim.api.nvim_set_hl(0, "IndentBlanklineIndent2", { bg = "#1A1A1A", nocombine = true })
     end,
 }

@@ -2,14 +2,14 @@ local map = vim.keymap.set
 
 return {
     {
-        "williamboman/mason.nvim",
+        "mason-org/mason.nvim",
         build = ":MasonUpdate",
         opts = {},
     },
     {
-        "williamboman/mason-lspconfig.nvim",
+        "mason-org/mason-lspconfig.nvim",
         dependencies = {
-            "williamboman/mason.nvim",
+            "mason-org/mason.nvim",
             "neovim/nvim-lspconfig",
         },
         opts = {
@@ -213,10 +213,24 @@ return {
             })
 
             vim.lsp.config('angularls', {
-                on_attach = default_on_attach,
+                on_attach = function(client, bufnr)
+                    default_on_attach(client, bufnr)
+
+                    if client.name == "angularls" then
+                        -- ❌ отключаем задваивание "Find References"
+                        client.server_capabilities.referencesProvider = false
+
+                        -- ❗ оставляем переход к определениям
+                        -- (это обеспечивает переход из HTML → TS)
+                        client.server_capabilities.definitionProvider = true
+
+                        -- По желанию также можно отключить rename/implementation
+                        -- client.server_capabilities.renameProvider = false
+                        -- client.server_capabilities.implementationProvider = false
+                    end
+                end,
                 capabilities = default_capabilities,
-                -- важное отличие от дефолта: убираем ts/tsx из filetypes
-                filetypes = { "html", "htmlangular" },
+                filetypes = { "html", "htmlangular", "typescript" },
             })
         end
     },
@@ -245,5 +259,23 @@ return {
                 capabilities = require("cmp_nvim_lsp").default_capabilities(),
             })
         end,
-    }
+    },
+    {
+        "linux-cultist/venv-selector.nvim",
+        dependencies = {
+            "neovim/nvim-lspconfig",
+            {
+                "nvim-telescope/telescope.nvim",
+                dependencies = { "nvim-lua/plenary.nvim" }
+            },                               -- optional: you can also use fzf-lua, snacks, mini-pick instead.
+        },
+        ft = "python",                       -- Load when opening Python files
+        keys = {
+            { "<leader>sv", "<cmd>VenvSelect<cr>", desc = "Select venv env" }, -- Open picker on keymap
+        },
+        opts = {                             -- this can be an empty lua table - just showing below for clarity.
+            search = {},                     -- if you add your own searches, they go here.
+            options = {}                     -- if you add plugin options, they go here.
+        },
+    },
 }
