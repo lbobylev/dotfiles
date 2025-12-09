@@ -105,7 +105,8 @@ require 'lazy'.setup {
         },
         opts = {
             filetypes = {
-                markdown = true
+                markdown = true,
+                yaml = true,
             },
             suggestion = {
                 enabled = true,

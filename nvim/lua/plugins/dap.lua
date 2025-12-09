@@ -1,5 +1,3 @@
-local map = vim.keymap.set
-
 return {
     {
         "mfussenegger/nvim-dap",
@@ -63,9 +61,8 @@ return {
             jdtls.setup_dap { hotcodereplace = 'auto' }
             require 'dap.ext.vscode'.load_launchjs()
 
-            map('n', '<leader>du', function() dapui.toggle { reset = true } end, { desc = 'Toggle dap ui' })
-            map('n', '<leader>dU', function() dapui.toggle { reset = true, layout = 1 } end, { desc = 'Toggle dap ui' })
+            vim.keymap.set('n', '<leader>du', function() dapui.toggle { reset = true } end, { desc = 'Toggle dap ui' })
+            vim.keymap.set('n', '<leader>dU', function() dapui.toggle { reset = true, layout = 1 } end, { desc = 'Toggle dap ui' })
         end
     },
-
 }

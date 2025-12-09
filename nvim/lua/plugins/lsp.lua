@@ -1,5 +1,3 @@
-local map = vim.keymap.set
-
 return {
     {
         "mason-org/mason.nvim",
@@ -56,6 +54,7 @@ return {
                 lua_ls = true,
                 ts_ls = true,
                 angularls = true,
+                yamlls = true,
             }
 
             for _, server in ipairs(require('mason-lspconfig').get_installed_servers()) do
@@ -75,7 +74,7 @@ return {
                         vim.cmd("edit!")
                     end
 
-                    map({ 'n', 'v' }, '<leader>f', format_python, { desc = 'Format code', buffer = bufnr })
+                    vim.keymap.set({ 'n', 'v' }, '<leader>f', format_python, { desc = 'Format code', buffer = bufnr })
 
                     require "lsp_signature".on_attach({
                         bind = true,
@@ -109,7 +108,7 @@ return {
             vim.lsp.config('ruff', {
                 on_attach = function(client, bufnr)
                     -- Fix all with Ruff
-                    map('n', '<leader>rf', function()
+                    vim.keymap.set('n', '<leader>rf', function()
                         vim.lsp.buf.code_action({
                             apply = true,
                             context = { only = { 'source.fixAll' } },
@@ -232,6 +231,28 @@ return {
                 capabilities = default_capabilities,
                 filetypes = { "html", "htmlangular", "typescript" },
             })
+
+            vim.lsp.config('yamlls', {
+                on_attach = default_on_attach,
+                capabilities = default_capabilities,
+                settings = {
+                    yaml = {
+                        validate = true,
+                        hover = true,
+                        completion = true,
+                        format = { enable = true },
+                        schemaStore = {
+                            enable = true,
+                            url = "https://www.schemastore.org/api/json/catalog.json",
+                        },
+                        schemas = {
+                            ["https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.22.0-standalone-strict/all.json"] =
+                            "/*k8s.yaml",
+                            ["https://json.schemastore.org/github-workflow.json"] = "/.github/workflows/*",
+                        }
+                    }
+                }
+            })
         end
     },
     { 'ray-x/lsp_signature.nvim', opts = {} },
@@ -267,15 +288,19 @@ return {
             {
                 "nvim-telescope/telescope.nvim",
                 dependencies = { "nvim-lua/plenary.nvim" }
-            },                                                                 -- optional: you can also use fzf-lua, snacks, mini-pick instead.
+            },
         },
-        ft = "python",                                                         -- Load when opening Python files
+        ft = "python",
+        opts = {
+            name = { ".venv", "venv", ".env", "env" },
+            search_workspace = true,
+            search_venv_managers = true,
+            options = {
+                notify_user_on_venv_activation = true,
+            },
+        },
         keys = {
-            { "<leader>sv", "<cmd>VenvSelect<cr>", desc = "Select venv env" }, -- Open picker on keymap
-        },
-        opts = {                                                               -- this can be an empty lua table - just showing below for clarity.
-            search = {},                                                       -- if you add your own searches, they go here.
-            options = {}                                                       -- if you add plugin options, they go here.
+            { "<leader>sv", "<cmd>VenvSelect<cr>", desc = "Select venv env" },
         },
     },
     {

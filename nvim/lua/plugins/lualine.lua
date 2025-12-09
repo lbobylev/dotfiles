@@ -33,5 +33,23 @@ return {
             lualine_y = { 'progress' },
             lualine_z = { 'location' }
         },
+        winbar = {},
+        inactive_winbar = {},
+        options = {
+            disabled_filetypes = {
+                statusline = {
+                    "NvimTree",
+                    "lazy",
+                    "alpha",
+                    "spectre_panel",
+                    "spectre_replace",
+                    "spectre_preview",
+                    "TelescopePrompt",
+                    -- "dashboard",
+                    -- "starter",
+                    -- "Outline",
+                }
+            }
+        }
     }
 }
