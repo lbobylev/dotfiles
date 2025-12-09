@@ -3,6 +3,7 @@ local map = vim.keymap.set
 return {
     {
         "mfussenegger/nvim-dap",
+        cmd = { "DapContinue", "DapToggleBreakpoint", "DapStepInto" },
         -- event = "VeryLazy",
     },
     {

@@ -9,17 +9,13 @@ vim.opt.termguicolors = true
 
 local map = vim.keymap.set
 
--- Настройка горячих клавиш для перемещения между буферами
-vim.api.nvim_set_keymap('n', '<leader>j', ':bprevious<CR>',
-    { noremap = true, silent = true, desc = 'Previous buffer' })
-vim.api.nvim_set_keymap('n', '<leader>k', ':bnext<CR>', { noremap = true, silent = true, desc = 'Next buffer' })
-
+map('n', '<S-Tab>', ':bprevious<CR>', { silent = true, desc = 'Previous buffer' })
+map('n', '<Tab>', ':bnext<CR>', { silent = true, desc = 'Next buffer' })
 map('n', '<leader>ga', ':!git add %<CR>', { desc = 'Git add buffer' })
 
 vim.diagnostic.config({
     virtual_text = true
 })
-
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -34,6 +30,9 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require 'lazy'.setup {
+    defaults = {
+        lazy = true,
+    },
     { import = 'plugins' },
     -- {
     --     "yorumicolors/yorumi.nvim",
@@ -55,41 +54,36 @@ require 'lazy'.setup {
     },
     {
         'folke/which-key.nvim',
-        opts = {}
+        opts = {
+            layout = {
+                height = { min = 4, max = 80 },
+                width = { min = 20, max = 100 },
+                spacing = 1,
+                align = "left",
+                columns = 6, -- ⚡️ Показать до 4 колонок!
+            }
+        }
     },
     {
         'goolord/alpha-nvim',
         opts = require 'alpha.themes.dashboard'.config
     },
     {
-        'j-hui/fidget.nvim',
-        opts = {
-            progress = {
-                display = {
-                    render_limit = 5
-                }
-            },
-            notification = {
-                window = {
-                    -- max_width = 60
-                }
-            }
-        }
-    },
-    {
         'rcarriga/nvim-notify',
-        config = function()
-            local n = require 'notify'
-            vim.notify = n
-            n.setup {
-                max_width = 50,
-                max_height = 60,
-                render = 'wrapped-default'
-            }
-        end,
+        opts = {
+            max_width = 50,
+            max_height = 60,
+            render = 'wrapped-default'
+        },
+        init = function()
+            vim.notify = function(...)
+                return require 'notify' (...)
+            end
+        end
     },
     {
         'stevearc/aerial.nvim',
+        event = "BufRead",
         opts = {
             min_width = 50,
         }
@@ -100,18 +94,27 @@ require 'lazy'.setup {
     },
     {
         'zbirenbaum/copilot.lua',
-        config = function()
-            require 'copilot'.setup {
-                suggestion = {
-                    enabled = true,
-                    auto_trigger = true,
-                    keymap = {
-                        accept_word = '<C-l>', -- Accept suggestion with <C-l>
-                    }
+        event = "InsertEnter",
+        keys = {
+            {
+                '<leader>aP',
+                '<cmd>Copilot panel<CR>',
+                mode = 'n',
+                desc = 'Open Copilot panel',
+            }
+        },
+        opts = {
+            filetypes = {
+                markdown = true
+            },
+            suggestion = {
+                enabled = true,
+                auto_trigger = true,
+                keymap = {
+                    accept_word = '<C-l>', -- Accept suggestion with <C-l>
                 }
             }
-            map({ 'n', 'v' }, '<leader>aP', require 'copilot.panel'.open, { desc = 'Copilot - Panel' })
-        end,
+        }
     },
     {
         "MeanderingProgrammer/render-markdown.nvim",
@@ -120,11 +123,7 @@ require 'lazy'.setup {
             "echasnovski/mini.nvim",
         },
         ft = { "markdown", "codecompanion" },
-        config = function()
-            require("render-markdown").setup {
-                file_types = { "markdown", "codecompanion" },
-            }
-        end
+        opts = {}
     },
     {
         'numToStr/Comment.nvim',
@@ -132,43 +131,94 @@ require 'lazy'.setup {
     },
     {
         'folke/trouble.nvim',
-        config = function()
-            require 'trouble'.setup {}
-            vim.api.nvim_set_keymap('n', '<leader>td', ':Trouble diagnostics<CR>',
-                { noremap = true, silent = true, desc = 'Trouble diagnostics' })
-        end,
+        opts = {},
+        keys = {
+            { '<leader>td', ':Trouble diagnostics<CR>', desc = 'Toggle Trouble' }
+        }
     },
     {
         'folke/flash.nvim',
-        config = function()
-            local f = require 'flash'
-            f.setup {
-                modes = {
-                    search = {
-                        enabled = true
-                    }
+        event = 'VeryLazy',
+        opts = {
+            modes = {
+                search = {
+                    enabled = true,
                 }
             }
-            map({ 'n', 'x', 'o' }, '<leader>sj', f.jump, { desc = "Flash jump" })
-            map({ 'n', 'x', 'o' }, '<leader>st', f.treesitter, { desc = "Flash Treesitter" })
-            map('o', 'r', f.remote, { desc = "Remote Flash" })
-            map({ 'o', 'x' }, '<leader>sts', f.treesitter_search,
-                { desc = "Flash Treesitter Search" })
-            map('c', '<c-s>', f.toggle, { desc = "Toggle Flash Search" })
-        end
+        },
+        keys = {
+            {
+                '<leader>sj',
+                function()
+                    require('flash').jump()
+                end,
+                mode = { 'n', 'x', 'o' },
+                desc = 'Flash jump',
+            },
+            {
+                '<leader>st',
+                function()
+                    require('flash').treesitter()
+                end,
+                mode = { 'n', 'x', 'o' },
+                desc = 'Flash Treesitter',
+            },
+            {
+                'r',
+                function()
+                    require('flash').remote()
+                end,
+                mode = 'o',
+                desc = 'Remote Flash',
+            },
+            {
+                '<leader>sts',
+                function()
+                    require('flash').treesitter_search()
+                end,
+                mode = { 'o', 'x' },
+                desc = 'Flash Treesitter Search',
+            },
+            {
+                '<c-s>',
+                function()
+                    require('flash').toggle()
+                end,
+                mode = 'c',
+                desc = 'Toggle Flash Search',
+            },
+        }
+
     },
     {
         'nvim-pack/nvim-spectre',
-        config = function()
-            local spectre = require 'spectre'
-            spectre.setup {}
-            map('n', '<leader>S', spectre.toggle, { desc = 'Toggle Spectre' })
-            map({ 'n', 'v' }, '<leader>sw', function()
-                spectre.open_visual(vim.fn.mode() == 'v' and { select_word = true } or {})
-            end, { desc = 'Search current word' })
-            map('n', '<leader>sp', function() spectre.open_file_search { select_word = true } end,
-                { desc = 'Search on current file' })
-        end,
+        keys = {
+            {
+                '<leader>S',
+                function()
+                    require('spectre').toggle()
+                end,
+                mode = 'n',
+                desc = 'Toggle Spectre',
+            },
+            {
+                '<leader>sw',
+                function()
+                    require('spectre').open_visual(vim.fn.mode() == 'v' and { select_word = true } or {})
+                end,
+                mode = { 'n', 'v' },
+                desc = 'Search current word',
+            },
+            {
+                '<leader>sp',
+                function()
+                    require('spectre').open_file_search { select_word = true }
+                end,
+                mode = 'n',
+                desc = 'Search on current file',
+            },
+
+        }
     },
     {
         'windwp/nvim-autopairs',
@@ -177,23 +227,23 @@ require 'lazy'.setup {
     {
         'kevinhwang91/nvim-ufo',
         dependencies = {
-            'kevinhwang91/promise-async'
+            'kevinhwang91/promise-async',
         },
-        config = function()
-            vim.o.foldcolumn = '1' -- Указывает, сколько колонок отводить под индикаторы сворачивания
-            vim.o.foldlevel = 99   -- Уровень сворачивания (99 означает, что код изначально не свернут)
+        event = 'BufReadPost',
+        opts = {
+            close_fold_kinds_for_ft = {
+                default = { 'imports', 'comment' },
+                json = { 'array' },
+            },
+            provider_selector = function()
+                return { 'treesitter', 'indent' }
+            end,
+        },
+        init = function()
+            vim.o.foldcolumn = '1' -- Колонки под индикаторы сворачивания
+            vim.o.foldlevel = 99   -- 99 означает, что код изначально не свернут
             vim.o.foldlevelstart = 99
             vim.o.foldenable = true
-
-            require 'ufo'.setup {
-                close_fold_kinds_for_ft = {
-                    default = { 'imports', 'comment' },
-                    json = { 'array' }
-                },
-                provider_selector = function()
-                    return { 'treesitter', 'indent' }
-                end
-            }
-        end
-    }
+        end,
+    },
 }

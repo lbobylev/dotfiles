@@ -1,25 +1,21 @@
 return {
     {
         "nvim-treesitter/nvim-treesitter",
+        event = { "BufReadPost", "BufNewFile" },
         build = ":TSUpdate",
-        config = function()
-            require 'nvim-treesitter.configs'.setup {
-                ensure_installed = { "markdown", "markdown_inline", "latex", "yaml", "python", "java", "lua", "typescript" },
-                highlight = {
-                    enable = true,
-                    -- additional_vim_regex_highlighting = false,
-                },
-                indent = {
-                    enable = true,
-                },
-            }
-        end
+        opts = {
+            ensure_installed = { "markdown", "markdown_inline", "latex", "yaml", "python", "java", "lua", "typescript" },
+            highlight = {
+                enable = true,
+                -- additional_vim_regex_highlighting = false,
+            },
+            indent = {
+                enable = true,
+            },
+        }
     },
     {
         "kiyoon/treesitter-indent-object.nvim",
-        config = function()
-            -- monokai
-        end,
         keys = {
             {
                 "ai",
@@ -54,16 +50,15 @@ return {
         -- https://github.com/kiyoon/indent-blankline-v2.nvim
         "kiyoon/indent-blankline-v2.nvim",
         event = "BufReadPost",
-        config = function()
+        init = function()
             vim.opt.list = true
             -- vim.opt.listchars:append "space:⋅"
             -- vim.opt.listchars:append "eol:↴"
-
-            require("indent_blankline").setup {
-                space_char_blankline = " ",
-                show_current_context = true,
-                -- show_current_context_start = true,
-            }
         end,
+        opts = {
+            space_char_blankline = " ",
+            show_current_context = true,
+            -- show_current_context_start = true,
+        }
     },
 }

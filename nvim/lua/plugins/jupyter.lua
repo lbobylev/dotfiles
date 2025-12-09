@@ -1,6 +1,7 @@
 return {
     {
         '3rd/image.nvim',
+        ft = { 'markdown' },
         opts = {
             backend = 'kitty',
             max_width = 100,
@@ -63,6 +64,11 @@ return {
 
             vim.keymap.set("n", "<localleader>rb", ":MoltenRunPythonBlock<CR>",
                 { desc = "Run current python block in Molten" })
+
+            vim.keymap.set("n", "<localleader>eo", function()
+                vim.cmd("noautocmd MoltenEnterOutput")
+                vim.bo.filetype = "markdown"
+            end, { desc = "Enter output" })
         end,
     },
     {

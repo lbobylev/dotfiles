@@ -1,23 +1,25 @@
 return {
+
     'hrsh7th/nvim-cmp',
+    event = 'InsertEnter',
     dependencies = {
         'hrsh7th/cmp-nvim-lsp',
         'hrsh7th/cmp-vsnip',
-        'hrsh7th/vim-vsnip'
+        'hrsh7th/vim-vsnip',
+        'onsails/lspkind-nvim',
     },
     config = function()
-        local has_words_before = function()
-            if vim.api.nvim_buf_get_option(0, 'buftype') == 'prompt' then return false end
-            local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-            return col ~= 0 and vim.api.nvim_buf_get_text(0, line - 1, 0, line - 1, col, {})[1]:match('^%s*$') == nil
-        end
-
         local cmp = require 'cmp'
         local compare = require 'cmp.config.compare'
 
+        local has_words_before = function()
+            if vim.api.nvim_buf_get_option(0, 'buftype') == 'prompt' then return false end
+            local line, col = table.unpack(vim.api.nvim_win_get_cursor(0))
+            return col ~= 0 and vim.api.nvim_buf_get_text(0, line - 1, 0, line - 1, col, {})[1]:match('^%s*$') == nil
+        end
+
         cmp.setup {
             sources = {
-                -- { name = 'cmp_tabnine' },
                 -- { name = 'copilot',                group_index = 2 },
                 { name = 'nvim_lsp' },
                 { name = 'nvim_lsp_signature_help' },
@@ -26,7 +28,6 @@ return {
             sorting = {
                 priority_weight = 2,
                 comparators = {
-                    -- require 'cmp_tabnine.compare',
                     -- require 'copilot_cmp.comparators'.prioritize,
                     compare.offset,
                     compare.exact,
@@ -40,11 +41,12 @@ return {
             },
             snippet = {
                 expand = function(args)
-                    vim.fn['vsnip#anonymous'](args.body)     -- because we are using the vsnip cmp plugin
+                    vim.fn['vsnip#anonymous'](args.body) -- because we are using the vsnip cmp plugin
                 end,
             },
             mapping = cmp.mapping.preset.insert({
-                ['<C-d>'] = cmp.mapping.scroll_docs(-4),     -- Ctrl + d
+                -- Ctrl + d
+                ['<C-d>'] = cmp.mapping.scroll_docs(-4),
                 ['<C-f>'] = cmp.mapping.scroll_docs(4),
                 ['<C-Space>'] = cmp.mapping.complete(),
                 ['<CR>'] = cmp.mapping.confirm {
@@ -59,7 +61,8 @@ return {
                         fallback()
                     end
                 end),
-                ['<S-Tab>'] = cmp.mapping(function(fallback)     -- Shift + Tab
+                -- Shift + Tab
+                ['<S-Tab>'] = cmp.mapping(function(fallback)
                     if cmp.visible() then
                         cmp.select_prev_item()
                     else
@@ -69,16 +72,9 @@ return {
             }),
             formatting = {
                 format = require 'lspkind'.cmp_format({
-                    mode = 'symbol',     -- show only symbol annotations
+                    mode = 'symbol',
                     symbol_map = { Copilot = '' },
-                    maxwidth = 50,       -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
-                    before = function(entry, vim_item)
-                        if entry.source.name == 'cmp_tabnine' then
-                            vim_item.kind = '🚀'
-                            vim_item.menu = 'Tabnine'
-                        end
-                        return vim_item
-                    end
+                    maxwidth = 50,
                 })
             }
         }
