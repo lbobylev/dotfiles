@@ -2,7 +2,7 @@
 
 # : Manager {{{
 
-[mgr]
+[manager]
 cwd = { fg = "#66D9EF" } # Monokai Blue
 
 # Hovered

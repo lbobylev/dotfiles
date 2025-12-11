@@ -2,34 +2,7 @@ return {
     'tanvirtin/monokai.nvim',
     lazy = false,
     priority = 1000,
-    config = function()
-        require 'monokai'.setup {
-            palette = {
-                background = "#000000", -- "#3b3c35",
-                foreground = "#fdfff1",
-                cursor = "#fdfff1",
-                cursor_text_color = "#000000",
-                selection_foreground = "#3b3c35",
-                selection_background = "#fdfff1",
-                color0 = "#000000", -- "#3b3c35",
-                color8 = "#000000", -- "#6e7066",
-                color1 = "#f82570",
-                color9 = "#f82570",
-                color2 = "#a6e12d",
-                color10 = "#a6e12d",
-                color3 = "#e4db73",
-                color11 = "#e4db73",
-                color4 = "#fc961f",
-                color12 = "#fc961f",
-                color5 = "#ae81ff",
-                color13 = "#ae81ff",
-                color6 = "#66d9ee",
-                color14 = "#66d9ee",
-                color7 = "#fdfff1",
-                color15 = "#fdfff1",
-            }
-        }
-
+    init = function()
         vim.cmd("colorscheme monokai")
         -- vim.cmd("colorscheme monokai_pro")
         -- vim.cmd("colorscheme monokai_soda")
@@ -63,5 +36,37 @@ return {
 
         -- vim.api.nvim_set_hl(0, "IndentBlanklineIndent1", { bg = "#121212", nocombine = true })
         -- vim.api.nvim_set_hl(0, "IndentBlanklineIndent2", { bg = "#1A1A1A", nocombine = true })
+
+        local green = "#133a13"
+        local red = "#3a1313"
+        vim.api.nvim_set_hl(0, "DiffAdd", { bg = green })
+        vim.api.nvim_set_hl(0, "DiffDelete", { bg = red })
+        vim.api.nvim_set_hl(0, "DiffChange", { bg = "#1f2f3f" })
     end,
+    opts = {
+        palette = {
+            background = "#000000",     -- "#3b3c35",
+            foreground = "#fdfff1",
+            cursor = "#fdfff1",
+            cursor_text_color = "#000000",
+            selection_foreground = "#3b3c35",
+            selection_background = "#fdfff1",
+            color0 = "#000000",     -- "#3b3c35",
+            color8 = "#000000",     -- "#6e7066",
+            color1 = "#f82570",
+            color9 = "#f82570",
+            color2 = "#a6e12d",
+            color10 = "#a6e12d",
+            color3 = "#e4db73",
+            color11 = "#e4db73",
+            color4 = "#fc961f",
+            color12 = "#fc961f",
+            color5 = "#ae81ff",
+            color13 = "#ae81ff",
+            color6 = "#66d9ee",
+            color14 = "#66d9ee",
+            color7 = "#fdfff1",
+            color15 = "#fdfff1",
+        }
+    }
 }

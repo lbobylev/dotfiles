@@ -14,6 +14,7 @@ path=(
   $HOME/.nvm/versions/node/v23.11.0/bin
   /Users/leonid/.cache/lm-studio/bin
   /opt/homebrew/opt/crowdin@4/bin
+  /opt/homebrew/opt/gnu-sed/libexec/gnubin
   $path
 )
 

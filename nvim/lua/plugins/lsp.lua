@@ -147,10 +147,14 @@ return {
                     "html",
                     "htmlangular",
                     "css",
+                    "sh",
+                    "zsh",
+                    "bash"
                 },
                 init_options = { documentFormatting = true },
                 settings = (function()
                     local bin_path = './node_modules/.bin'
+
                     local eslint = {
                         lintCommand = bin_path .. '/eslint -f unix --stdin --stdin-filename ${INPUT}',
                         lintStdin = true,
@@ -158,10 +162,17 @@ return {
                         formatCommand = bin_path .. '/prettier --stdin-filepath ${INPUT}',
                         formatStdin = true
                     }
+
                     local prettier_only = {
                         formatCommand = bin_path .. '/prettier --stdin-filepath ${INPUT}',
                         formatStdin = true,
                     }
+
+                    local shfmt = {
+                        formatCommand = '/opt/homebrew/bin/shfmt -i 4 -ci -bn',
+                        formatStdin = true,
+                    }
+
                     return {
                         rootMarkers = { ".git/" },
                         languages = {
@@ -174,6 +185,9 @@ return {
                             html = { prettier_only },
                             htmlangular = { prettier_only },
                             css = { prettier_only },
+                            sh = { shfmt },
+                            bash = { shfmt },
+                            zsh = { shfmt },
                         }
                     }
                 end)(),

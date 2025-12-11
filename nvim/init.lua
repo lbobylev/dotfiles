@@ -58,7 +58,7 @@ require 'lazy'.setup {
             layout = {
                 height = { min = 4, max = 80 },
                 width = { min = 20, max = 100 },
-                spacing = 1,
+                spacing = 4,
                 align = "left",
                 columns = 6, -- ⚡️ Показать до 4 колонок!
             }
