@@ -10,6 +10,8 @@ return {
             max_width_window_percentage = math.huge,
             window_overlap_clear_enabled = true, -- toggles images when windows are overlapped
             window_overlap_clear_ft_ignore = { 'cmp_menu', 'cmp_docs', '' },
+            -- https://github.com/3rd/image.nvim/issues/63
+            tmux_show_only_in_active_window = true,
         },
     },
     {
