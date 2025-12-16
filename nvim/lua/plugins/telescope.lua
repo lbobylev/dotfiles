@@ -12,13 +12,22 @@ return {
 
         telescope.setup {
             defaults = {
-                path_display = {
-                    shorten = {
-                        len = 3, exclude = { 1, -1 }
-                    },
-                    truncate = true
+                layout_strategy = 'vertical',
+                borderchars     = {
+                    prompt  = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
+                    results = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
+                    preview = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
                 },
-                dynamic_preview_title = true,
+                layout_config   = {
+                    width = 0.75,
+                },
+
+                -- dynamic_preview_title = true,
+
+                -- path_display = {
+                --     shorten = { len = 15, exclude = { 1, -1 } },
+                --     truncate = true,
+                -- }
             },
             pickers = {
                 find_files = { no_ignore = false, hidden = false }
@@ -54,6 +63,7 @@ return {
         end
 
         local builtin = require 'telescope.builtin'
+
         map('n', '<leader>ff', function() builtin.find_files(get_opts()) end, { desc = 'Find files' })
         map('n', '<leader>fg', function() builtin.live_grep(get_opts()) end, { desc = 'Live grep' })
         map('n', '<leader>fb', builtin.buffers, { desc = 'List buffers' })

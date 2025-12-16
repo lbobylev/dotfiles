@@ -33,6 +33,17 @@ require 'lazy'.setup {
     defaults = {
         lazy = true,
     },
+    -- { import = 'plugins.codecompanion' },
+    -- { import = 'plugins.dap' },
+    -- { import = 'plugins.git' },
+    -- { import = 'plugins.jupyter' },
+    -- { import = 'plugins.lsp' },
+    -- { import = 'plugins.lualine' },
+    -- { import = 'plugins.monokai' },
+    -- { import = 'plugins.nvim-cmp' },
+    -- { import = 'plugins.nvim-tree' },
+    -- { import = 'plugins.telescope' },
+    -- { import = 'plugins.treesitter' },
     { import = 'plugins' },
     -- {
     --     "yorumicolors/yorumi.nvim",
@@ -60,7 +71,7 @@ require 'lazy'.setup {
                 width = { min = 20, max = 100 },
                 spacing = 4,
                 align = "left",
-                columns = 6, -- ⚡️ Показать до 4 колонок!
+                columns = 6,
             }
         }
     },
@@ -189,7 +200,7 @@ require 'lazy'.setup {
                 desc = 'Toggle Flash Search',
             },
         }
-
+    
     },
     {
         'nvim-pack/nvim-spectre',
@@ -218,7 +229,7 @@ require 'lazy'.setup {
                 mode = 'n',
                 desc = 'Search on current file',
             },
-
+    
         }
     },
     {
