@@ -1,8 +1,12 @@
 return {
     {
         "nvim-treesitter/nvim-treesitter",
+        branch = "master",
         event = { "BufReadPost", "BufNewFile" },
         build = ":TSUpdate",
+        dependencies = {
+            "nvim-treesitter/nvim-treesitter-textobjects"
+        },
         opts = {
             ensure_installed = { "markdown", "markdown_inline", "latex", "yaml", "python", "java", "lua", "typescript" },
             highlight = {
@@ -12,9 +16,20 @@ return {
             indent = {
                 enable = true,
             },
+            textobjects = {
+                select = {
+                    enable = true,
+                    lookahead = true,
+                    keymaps = {
+                        ["af"] = "@function.outer",
+                        ["if"] = "@function.inner",
+                        ["ac"] = "@class.outer",
+                    },
+                },
+            },
         },
         config = function(_, opts)
-            require "nvim-treesitter.config".setup(opts)
+            require "nvim-treesitter.configs".setup(opts)
         end,
     },
     {

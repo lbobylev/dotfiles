@@ -1,7 +1,7 @@
 set -o vi
 
 # Amazon Q pre block. Keep at the top of this file.
-[[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
+# [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
 # Amazon Q pre block. Keep at the top of this file.
 
 path=(
@@ -15,6 +15,7 @@ path=(
   /Users/leonid/.cache/lm-studio/bin
   /opt/homebrew/opt/crowdin@4/bin
   /opt/homebrew/opt/gnu-sed/libexec/gnubin
+  /Library/TeX/texbin
   $path
 )
 
@@ -24,7 +25,6 @@ export LM_STUDIO_API_BASE=http://localhost:1234/v1/
 
 # Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
-
 ZSH_THEME="robbyrussell"
 
 plugins=(git kubectl conda)
@@ -102,4 +102,4 @@ conda() {
 }
 
 # Amazon Q post block. Keep at the bottom of this file.
-[[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
+# [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"

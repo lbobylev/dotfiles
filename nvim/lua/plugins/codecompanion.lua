@@ -1,33 +1,36 @@
 return {
+    -- {
+    --     "echasnovski/mini.diff",
+    --     version = false,
+    --     config = function()
+    --         local diff = require("mini.diff")
+    --         diff.setup({
+    --             source = diff.gen_source.none(),
+    --         })
+    --     end,
+    -- },
     {
-        "echasnovski/mini.diff",
-        version = false,
-        config = function()
-            local diff = require("mini.diff")
-            diff.setup({
-                -- по умолчанию отключаем git-дифф как источник,
-                -- CodeCompanion сам переключит источник, когда нужно
-                source = diff.gen_source.none(),
-            })
-        end,
-    },
-    {
-        'olimorris/codecompanion.nvim',
-        event = 'VeryLazy',
-        version = 'v17.33.0',
+        "olimorris/codecompanion.nvim",
+        event = "VeryLazy",
         dependencies = {
             "nvim-lua/plenary.nvim",
             "nvim-treesitter/nvim-treesitter",
             "hrsh7th/nvim-cmp",
-            'tpope/vim-fugitive',
-            'echasnovski/mini.diff',
-            'echasnovski/mini.icons'
+            "tpope/vim-fugitive",
+            "echasnovski/mini.diff",
+            "echasnovski/mini.icons",
         },
         init = function()
-            -- vim.g.codecompanion_auto_tool_mode = true
-            require 'codecompanion-fidget-spinner':init()
-            -- Expand 'cc' into 'CodeCompanion' in the command line
+            require("codecompanion-fidget-spinner"):init()
             vim.cmd([[cab cc CodeCompanion]])
+
+            vim.api.nvim_create_autocmd("BufEnter", {
+                callback = function()
+                    if vim.bo.filetype == "codecompanion" or vim.b.codecompanion then
+                        vim.wo.winfixbuf = true
+                    end
+                end,
+            })
         end,
         keys = {
             {
@@ -54,48 +57,48 @@ return {
                 noremap = true,
                 silent = true,
             },
-
         },
         opts = {
-            strategies = {
-                chat = { adapter = 'openai' },
-                inline = {
-                    adapter = 'openai',
-                }
+            interactions = {
+                chat = {
+                    adapter = "openai",
+                    opts = {
+                        system_prompt = function(ctx)
+                            return ctx.default_system_prompt
+                        end,
+                        override_system_prompt = true,
+                    },
+                },
+                inline = { adapter = "openai" },
             },
+
             adapters = {
                 http = {
                     openai = function()
-                        return require 'codecompanion.adapters'.extend('openai', {
-                            env = {
-                                api_key = 'OPENAI_API_KEY',
-                            },
+                        return require("codecompanion.adapters").extend("openai", {
+                            env = { api_key = "OPENAI_API_KEY" },
                             schema = {
-                                model = {
-                                    default = 'gpt-5.1',
-                                    temperature = 0,
-                                }
-                            }
+                                model = { default = "gpt-5.1" },
+                            },
+                            parameters = {
+                                temperature = 0,
+                            },
                         })
-                    end
-                }
+                    end,
+                },
             },
+
             display = {
                 chat = {
                     render_headers = false,
                     window = {
-                        layout = 'horizontal',
+                        layout = "horizontal",
                         width = 1,
                         height = 0.4,
-                    }
+                    },
                 },
-                -- diff = {
-                --     provider = 'mini_diff',
-                -- },
-                -- inline = {
-                --     layout = "buffer"
-                -- },
-            }
-        }
+            },
+        },
     }
+
 }

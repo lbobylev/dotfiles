@@ -6,6 +6,11 @@ vim.opt.expandtab = true
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ','
 vim.opt.termguicolors = true
+vim.opt.exrc = true
+vim.opt.secure = true
+vim.diagnostic.config({
+    virtual_text = true
+})
 
 local map = vim.keymap.set
 
@@ -13,9 +18,29 @@ map('n', '<S-Tab>', ':bprevious<CR>', { silent = true, desc = 'Previous buffer' 
 map('n', '<Tab>', ':bnext<CR>', { silent = true, desc = 'Next buffer' })
 map('n', '<leader>ga', ':!git add %<CR>', { desc = 'Git add buffer' })
 
-vim.diagnostic.config({
-    virtual_text = true
+vim.api.nvim_create_autocmd("TermOpen", {
+    callback = function()
+        vim.opt_local.bufhidden = "wipe"
+        vim.opt_local.buflisted = false
+    end,
 })
+
+map("n", "<leader>q", function()
+    local is_last_win = (vim.fn.winnr("$") == 1)
+
+    if vim.bo.buftype == "terminal" then
+        if is_last_win then
+            vim.cmd("q")
+        else
+            vim.cmd("close")
+        end
+        return
+    end
+
+    vim.cmd("bd")
+end, { desc = 'Close buffer or quit' })
+
+
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -59,9 +84,18 @@ require 'lazy'.setup {
     },
     {
         'akinsho/bufferline.nvim',
+        event = "BufReadPre",
         version = "*",
         dependencies = 'nvim-tree/nvim-web-devicons',
-        opts = {}
+        opts = {
+            options = {
+                sort_by = "id",
+            },
+        },
+        keys = {
+            { "<A-l>", "<cmd>BufferLineMoveNext<CR>", desc = "BufferLine: move buffer right" },
+            { "<A-h>", "<cmd>BufferLineMovePrev<CR>", desc = "BufferLine: move buffer left" },
+        },
     },
     {
         'folke/which-key.nvim',
@@ -76,8 +110,22 @@ require 'lazy'.setup {
         }
     },
     {
+        "MaximilianLloyd/ascii.nvim",
+        dependencies = {
+            "MunifTanjim/nui.nvim",
+        },
+    },
+    {
         'goolord/alpha-nvim',
-        opts = require 'alpha.themes.dashboard'.config
+        dependencies = { "MaximilianLloyd/ascii.nvim" },
+        config = function()
+            local alpha = require('alpha')
+            local dashboard = require('alpha.themes.dashboard')
+            local ascii = require('ascii')
+
+            dashboard.section.header.val = ascii.art.text.neovim.sharp
+            alpha.setup(dashboard.config)
+        end,
     },
     {
         'rcarriga/nvim-notify',
@@ -200,7 +248,7 @@ require 'lazy'.setup {
                 desc = 'Toggle Flash Search',
             },
         }
-    
+
     },
     {
         'nvim-pack/nvim-spectre',
@@ -229,12 +277,22 @@ require 'lazy'.setup {
                 mode = 'n',
                 desc = 'Search on current file',
             },
-    
+
         }
     },
     {
         'windwp/nvim-autopairs',
         opts = {}
+    },
+    {
+        "kylechui/nvim-surround",
+        version = "^3.0.0", -- Use for stability; omit to use `main` branch for the latest features
+        event = "VeryLazy",
+        config = function()
+            require("nvim-surround").setup({
+                -- Configuration here, or leave empty to use defaults
+            })
+        end
     },
     {
         'kevinhwang91/nvim-ufo',

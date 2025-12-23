@@ -12,6 +12,7 @@ return {
 
         telescope.setup {
             defaults = {
+                -- hidden          = true,
                 layout_strategy = 'vertical',
                 borderchars     = {
                     prompt  = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
@@ -29,8 +30,29 @@ return {
                 --     truncate = true,
                 -- }
             },
+
             pickers = {
-                find_files = { no_ignore = false, hidden = false }
+                find_files = {
+                    no_ignore = true,
+                    hidden = true,
+                    file_ignore_patterns = {
+                        "^.git/",
+                        "^node_modules/",
+                        "^build/",
+                        "^.gradle/",
+                        "^bin/",
+                        "^.aider%.tags%.cache%.v3/",
+                        "^.aider%.tags%.cache%.v4/",
+                        "^.aider%.chat%.history%.md$",
+                        "^.aider%.input%.history$",
+                        "^.settings/",
+                        "^.classpath$",
+                        "^.project$",
+                        "^gradlew.bat$",
+                        "^gradlew$",
+                        "^gradle/wrapper/",
+                    },
+                }
             },
             extensions = {
                 fzf = {
